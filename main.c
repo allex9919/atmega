@@ -19,15 +19,16 @@ int main (void)
 	lcdSetCursor(LCD_CURSOR_OFF);
 	lcdClear();
 	
-	int32_t mem = 11111;
+	uint32_t mem = 11111;
+	uint32_t adr = 0;
 	eeprom_busy_wait();
-	eeprom_update_dword(0, mem);
+	eeprom_update_dword(adr, mem);
 	
-	int32_t mem2 = 22222;
+	uint32_t mem2 = 22222;
+	uint32_t adr2 = 4;
 	eeprom_busy_wait();
-	eeprom_update_dword(4, mem2);
+	eeprom_update_dword(adr2, mem2);
 
-	unsigned short m; // объявляем переменную для цикла
 	//char Result[5] = ""; 
 	//char Code[5] = "";
 	//int Result_Copy = 0;
@@ -37,47 +38,57 @@ int main (void)
 	//char *Read_Number_Str = "";
 	//char *j_str = "";
 	//char *Key_str = "";
+	unsigned short m; // объявляем переменную для цикла
 	unsigned short i; // объявляем переменную для цикла
+	unsigned short ii; // объявляем переменную для цикла
+	unsigned short iii; // объявляем переменную для цикла
 	unsigned short j; // объявляем переменную для цикла
-	unsigned short a; // объявляем переменную для цикла
-	unsigned short ad; // объявляем переменную для цикла
+	uint32_t n = 0;
+	uint8_t nn = 0;
+	char Result[7] = ""; 
+	char Code[7] = "";
+	uint32_t Result_Copy = 0;
+	uint32_t Code_Copy = 0;
+	uint32_t var = 0;
+	uint32_t var2 = 0;
+	
 	
 	while(1) 
 	{
-		char Result[7] = ""; 
-		char Code[7] = "";
-		int32_t Result_Copy = 0;
-		int32_t Code_Copy = 0;
-		int32_t var = 0;
+		memset(Result, 0, sizeof Result);
+		memset(Code, 0, sizeof Code);
+		Result_Copy = 0;
+		Code_Copy = 0;
+		var = 0;
 		lcdClear();
 		for(m=0; m<300; m++)
 		{
 			lcdGotoXY(0,0); 
 			lcdPuts("Enter code:"); 
 			// Выводим значение нажатой кнопки на индикатор
-			for (i=0; i<7; i++)
+			for (j=0; j<7; j++)
 			{
-				if (Result[i]==0)
+				if (Result[j]==0)
 				{
-					if(scan_key()==11) Result[i]='0';
-					else if(scan_key()==1) Result[i]='1';
-					else if(scan_key()==2) Result[i]='2';
-					else if(scan_key()==3) Result[i]='3';
-					else if(scan_key()==4) Result[i]='4';
-					else if(scan_key()==5) Result[i]='5';
-					else if(scan_key()==6) Result[i]='6';
-					else if(scan_key()==7) Result[i]='7';
-					else if(scan_key()==8) Result[i]='8';
-					else if(scan_key()==9) Result[i]='9';
+					if(scan_key()==11) Result[j]='0';
+					else if(scan_key()==1) Result[j]='1';
+					else if(scan_key()==2) Result[j]='2';
+					else if(scan_key()==3) Result[j]='3';
+					else if(scan_key()==4) Result[j]='4';
+					else if(scan_key()==5) Result[j]='5';
+					else if(scan_key()==6) Result[j]='6';
+					else if(scan_key()==7) Result[j]='7';
+					else if(scan_key()==8) Result[j]='8';
+					else if(scan_key()==9) Result[j]='9';
 					break;
 				}
 			}
 			if(scan_key()==10)  
 			{
-				for (i=4; i<129; i+=4)
+				for (n=4; n<129; n+=4)
 				{
 					eeprom_busy_wait();
-					var = eeprom_read_dword(i);
+					var = eeprom_read_dword(n);
 					if  (Result_Copy  ==  var) 
 					{ 
 						_delay_ms(100);
@@ -103,7 +114,7 @@ int main (void)
 				{
 					_delay_ms(100);
 					lcdClear();
-					for(j=0; j<=30; j++)
+					for(i=0; i<=30; i++)
 					{
 						Code_Copy = 0;
 						lcdGotoXY(0,0);
@@ -114,40 +125,44 @@ int main (void)
 						{
 							_delay_ms(100);
 							lcdClear();
-							for(a=0; a<=100; a++)
+							for(ii=0; ii<=100; ii++)
 							{
 								lcdGotoXY(0,0);
 								lcdPuts("*:Add-");
 								// Выводим значение нажатой кнопки на индикатор
-								for (i=0; i<7; i++)
+								for (j=0; j<7; j++)
 								{
-									if (Code[i]==0)
+									if (Code[j]==0)
 									{
-										if(scan_key()==11) Code[i]='0';
-										else if(scan_key()==1) Code[i]='1';
-										else if(scan_key()==2) Code[i]='2';
-										else if(scan_key()==3) Code[i]='3';
-										else if(scan_key()==4) Code[i]='4';
-										else if(scan_key()==5) Code[i]='5';
-										else if(scan_key()==6) Code[i]='6';
-										else if(scan_key()==7) Code[i]='7';
-										else if(scan_key()==8) Code[i]='8';
-										else if(scan_key()==9) Code[i]='9';
+										if(scan_key()==11) Code[j]='0';
+										else if(scan_key()==1) Code[j]='1';
+										else if(scan_key()==2) Code[j]='2';
+										else if(scan_key()==3) Code[j]='3';
+										else if(scan_key()==4) Code[j]='4';
+										else if(scan_key()==5) Code[j]='5';
+										else if(scan_key()==6) Code[j]='6';
+										else if(scan_key()==7) Code[j]='7';
+										else if(scan_key()==8) Code[j]='8';
+										else if(scan_key()==9) Code[j]='9';
 										break;
 									}
 								}
 								if(scan_key()==10) 
 								{
-									for(i=4; i<129; i+=4)
+									var2 = 0;
+									for(n=4; n<129; n+=4)
 									{
+										//uint8_t nn = n;
+										nn = n;
 										eeprom_busy_wait();
-										if (eeprom_read_byte(i) == 0xFF)
+										var2 = eeprom_read_byte(nn);
+										if (var2 == 0xFF)
 										{
 											eeprom_busy_wait();
-											eeprom_update_dword(Code_Copy, i);
+											eeprom_update_dword(n, Code_Copy);
 											_delay_ms(100);
 											lcdClear();
-											for(ad=0; ad<=5; ad++)
+											for(iii=0; iii<=5; iii++)
 											{
 												lcdGotoXY(1,5);
 												lcdPuts("Added");
@@ -167,7 +182,7 @@ int main (void)
 									memset(Code, 0, sizeof Code);
 									_delay_ms(100);
 									lcdClear();
-									for(j=0; j<=5; j++)
+									for(iii=0; iii<=5; iii++)
 									{
 										lcdGotoXY(1,5); 
 										lcdPuts("Cleaned");
@@ -188,22 +203,21 @@ int main (void)
 						}
 						memset(Result, 0, sizeof Result);
 						memset(Code, 0, sizeof Code);
+						Result_Copy = 0;
+						Code_Copy = 0;
 						var = 0;
 						_delay_ms(10);
 					}
 				}
-				memset(Result, 0, sizeof Result);
-				memset(Code, 0, sizeof Code);
-				var = 0;
-				lcdClear();
 				_delay_ms(100);
+				break;
 			}
 			
 			if(scan_key()==12)
 			{
 				_delay_ms(100);
 				lcdClear();
-				for(j=0; j<=5; j++)
+				for(i=0; i<=5; i++)
 				{
 					lcdGotoXY(1,5); 
 					lcdPuts("Cleaned");
@@ -212,6 +226,7 @@ int main (void)
 					_delay_ms(100);
 				}
 				PORTB = 0x00;
+				_delay_ms(10);
 				break;
 			}
 			
