@@ -21,15 +21,15 @@ int main (void)
 	lcdSetDisplay(LCD_DISPLAY_ON);
 	_delay_ms(10);
 //--------------------------------------------------------------------------	
-	uint32_t mem = 11111;
+	/*uint32_t mem = 11111;
 	uint32_t adr = 0;
 	eeprom_busy_wait();
-	eeprom_write_dword(adr, mem);
+	eeprom_write_dword(adr, mem);*/
 //--------------------------------------------------------------------------	
-	uint32_t mem2 = 22222;
+	/*uint32_t mem2 = 22222;
 	uint32_t adr2 = 4;
 	eeprom_busy_wait();
-	eeprom_write_dword(adr2, mem2);
+	eeprom_write_dword(adr2, mem2);*/
 //--------------------------------------------------------------------------
 	unsigned short m; // объявляем переменную для цикла
 	unsigned short i; // объявляем переменную для цикла
