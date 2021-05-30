@@ -21,12 +21,12 @@ int main (void)
 	lcdSetDisplay(LCD_DISPLAY_ON);
 	_delay_ms(10);
 //--------------------------------------------------------------------------	
-	uint32_t mem = 1111;
+	uint32_t mem = 11111;
 	uint32_t adr = 0;
 	eeprom_busy_wait();
 	eeprom_write_dword(adr, mem);
 //--------------------------------------------------------------------------	
-	uint32_t mem2 = 2222;
+	uint32_t mem2 = 22222;
 	uint32_t adr2 = 4;
 	eeprom_busy_wait();
 	eeprom_write_dword(adr2, mem2);
@@ -60,15 +60,15 @@ int main (void)
 		lcdClear();
 		_delay_ms(50);
 ////////////////////////////////////////////////////////////////////////////		
-		for(m=0; m<600; m++)
+		for(m=0; m<450; m++)
 		{ 
 			lcdGotoXY(0,0); 
 			lcdPuts("Enter code:"); 
-			Result_Copy = atoi(Result);
+			Result_Copy = atol(Result);
 			lcdGotoXY(1,0); 
 			lcdPuts(Result); 	
 			// Выводим значение нажатой кнопки на индикатор
-			for (j=0; j<4; j++)
+			for (j=0; j<5; j++)
 			{
 				if (Result[j]==0)
 				{
@@ -90,7 +90,7 @@ int main (void)
 			if(scan_key()==10)  
 			{
 				//_delay_ms(30);
-				if(Result[3]!=0) 
+				if(Result[4]!=0) 
 				{
 					for (n=4; n<129; n+=4)
 					{
@@ -100,7 +100,7 @@ int main (void)
 						{ 
 							lcdClear();
 							_delay_ms(50);
-							for(j=0; j<=18; j++)
+							for(j=0; j<=20; j++)
 							{
 								lcdGotoXY(1,4); 
 								lcdPuts("Unlocked"); 
@@ -122,7 +122,7 @@ int main (void)
 					{
 						lcdClear();
 						_delay_ms(50);
-						for(i=0; i<=62; i++)
+						for(i=0; i<=60; i++)
 						{
 							memset(Code, 0, sizeof Code);//-------------
 							c = 0;//----------
@@ -142,11 +142,11 @@ int main (void)
 								{
 									lcdGotoXY(0,0);
 									lcdPuts("*:Add-");
-									Code_Copy = atoi(Code);
+									Code_Copy = atol(Code);
 									lcdGotoXY (0,7);
 									lcdPuts(Code);
 									// Выводим значение нажатой кнопки на индикатор
-									for (j=0; j<4; j++)
+									for (j=0; j<5; j++)
 									{
 										if (Code[j]==0)
 										{
@@ -168,7 +168,7 @@ int main (void)
 									if (scan_key()==10) 
 									{
 										//_delay_ms(30);
-										if(Code[3]!=0) 
+										if(Code[4]!=0) 
 										{
 											for(n=4; n<129; n+=4)
 											{
@@ -193,6 +193,7 @@ int main (void)
 													break;
 												}
 											}
+											i = 0;
 											break;
 										}
 										else 
@@ -203,7 +204,7 @@ int main (void)
 											for(iii=0; iii<=5; iii++)
 											{
 												lcdGotoXY(1,1); 
-												lcdPuts("Min. 4 number");
+												lcdPuts("Min. 5 number");
 												//красный светодиод
 												PORTB |=(1<<6);    //высокий уровень
 												_delay_ms(100);
@@ -243,11 +244,11 @@ int main (void)
 								{
 									lcdGotoXY(0,0);
 									lcdPuts("*:Delete-");
-									Code_Copy = atoi(Code);
+									Code_Copy = atol(Code);
 									lcdGotoXY (0,10);
 									lcdPuts(Code);
 									// Выводим значение нажатой кнопки на индикатор
-									for (j=0; j<4; j++)
+									for (j=0; j<5; j++)
 									{
 										if (Code[j]==0)
 										{
@@ -269,7 +270,7 @@ int main (void)
 									if (scan_key()==10) 
 									{
 										//_delay_ms(30);
-										if(Code[3]!=0) 
+										if(Code[4]!=0) 
 										{
 											for(n=4; n<129; n+=4)
 											{
@@ -303,6 +304,7 @@ int main (void)
 													break;
 												}
 											}
+											i = 0;
 											break;
 										}
 										else 
@@ -313,7 +315,7 @@ int main (void)
 											for(iii=0; iii<=5; iii++)
 											{
 												lcdGotoXY(1,1); 
-												lcdPuts("Min. 4 number");
+												lcdPuts("Min. 5 number");
 												//красный светодиод
 												PORTB |=(1<<6);    //высокий уровень
 												_delay_ms(100);
@@ -366,8 +368,8 @@ int main (void)
 										{
 											eeprom_busy_wait();
 											var2 = eeprom_read_dword(n);
-											utoa(var2, Code, 10);
-											utoa(c, Num, 10);
+											ultoa(var2, Code, 10);
+											ultoa(c, Num, 10);
 											lcdClear();
 											_delay_ms(50);
 											for(ii=0; ii<=300; ii++)
@@ -426,6 +428,7 @@ int main (void)
 									PORTB = 0x00;
 									_delay_ms(10);
 								}
+								i = 0;
 								lcdClear();
 								_delay_ms(50);
 							}
@@ -439,7 +442,7 @@ int main (void)
 								{
 									lcdGotoXY(0,0);
 									lcdPuts("*:Change-");
-									Code_Copy = atoi(Code);
+									Code_Copy = atol(Code);
 									lcdGotoXY (0,10);
 									lcdPuts(Code);
 									// Выводим значение нажатой кнопки на индикатор
@@ -465,7 +468,7 @@ int main (void)
 									if (scan_key()==10) 
 									{
 										//_delay_ms(30);
-										if(Code[3]!=0) 
+										if(Code[4]!=0) 
 										{
 											if (Code[0] != 0)
 											{
@@ -483,6 +486,7 @@ int main (void)
 													_delay_ms(100);
 												}
 												PORTB = 0x00;
+												i = 0;
 												break;
 											}
 										}
@@ -494,7 +498,7 @@ int main (void)
 											for(iii=0; iii<=5; iii++)
 											{
 												lcdGotoXY(1,1); 
-												lcdPuts("Min. 4 number");
+												lcdPuts("Min. 5 number");
 												//красный светодиод
 												PORTB |=(1<<6);    //высокий уровень
 												_delay_ms(100);
@@ -533,7 +537,7 @@ int main (void)
 					lcdClear();
 					_delay_ms(50);
 				}
-				else  if (Result[3] == 0) 
+				else  if (Result[4] == 0) 
 				{
 					//memset(Result, 0, sizeof Code);//----------
 					lcdClear();
@@ -541,7 +545,7 @@ int main (void)
 					for(i=0; i<=5; i++)
 					{
 						lcdGotoXY(1,1); 
-						lcdPuts("Min. 4 number");
+						lcdPuts("Min. 5 number");
 						//красный светодиод
 						PORTB |=(1<<6);    //высокий уровень
 						_delay_ms(100);
