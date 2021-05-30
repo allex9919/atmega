@@ -4,12 +4,10 @@
 
 #include "main.h"
 
-//void EEPROM_write(unsigned int uiAddress, unsigned char ucData);
+// чтение
+//int EEPROM_int_read(int addr);
 
-//unsigned char EEPROM_read(unsigned int uiAddress);
-
-void EEPROM_write(unsigned int uiAddress, uint32_t ucData);
-
-uint32_t EEPROM_read(unsigned int uiAddress);
+// запись
+//void EEPROM_int_write(int addr, int num);
 
 #endif /* EEPROM_H_ */

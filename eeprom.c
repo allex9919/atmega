@@ -2,90 +2,36 @@
 
 //—————————————-
 
-/*
-void EEPROM_write(unsigned int uiAddress, unsigned char ucData)
-
-{
-
-  while(EECR & (1<<EEWE)) //ждем освобождения флага окончания последней операцией с памятью
-
-  {}
-
-  EEAR = uiAddress; //Устанавливаем адрес
-
-  EEDR = ucData; //Пищем данные в регистр
-
-  EECR |= (1<<EEMWE); //Разрешаем запись
-
-  EECR |= (1<<EEWE); //Пишем байт в память
-
+// чтение
+/*int32_t EEPROM_int_read(unsigned int addr) 
+{    
+	int32_t v = 0;
+	int8_t vv = 0;
+	unsigned int i = addr;
+	unsigned int ii = 0;
+	for( i; i < (addr + 3); i++ )
+	{
+		vv = eeprom_read_byte(i);
+		ii = i;
+		v += vv * (10 ^ ii);
+		ii += (2 + i);
+	}
+	return v;
 }
 
-unsigned char EEPROM_read(unsigned int uiAddress)
-
-{
-
-  while(EECR & (1<<EEWE))
-
-  {} //ждем освобождения флага окончания последней операцией с памятью
-
-  EEAR = uiAddress; //Устанавливаем адрес
-
-  EECR |= (1<<EERE); //Запускаем операцию считывания из памяти в регистр данных
-
-  return EEDR; //Возвращаем результат
-
+// запись
+void EEPROM_int_write(int addr, unsigned int num) {
+	int8_t v2 = 0;
+	int32_t vv2 = num;
+	int32_t vvv2 = 0;
+	unsigned int l2 = addr;
+	unsigned int ll2 = 6;
+	for( l2; l2 < (l2 + 3); l2++ )
+	{
+		vvv2 = (vv2 % (10 ^ ll2));
+		ll2 -= 2;
+		v2 = vvv2 / (10 ^ ll2);
+		eeprom_write_byte(l2, v2);
+	}
 }
 */
-
-void EEPROM_write_word(unsigned int uiAddress, uint16_t ucData)
-
-{
-
-	EEPROM_write(uiAddress, (unsigned char) ucData);
-
-	unsigned char dt = ucData>>8;
-
-	EEPROM_write(uiAddress+1, dt);
-
-}
-
-uint16_t EEPROM_read_word(unsigned int uiAddress)
-
-{
-
-	uint16_t dt = EEPROM_read(uiAddress+1)*256;
-
-	asm("nop");
-
-	dt += EEPROM_read(uiAddress);
-
-	return dt;
-
-}
-
-void EEPROM_write(unsigned int uiAddress, uint32_t ucData)
-
-{
-
-  EEPROM_write_word(uiAddress, (uint16_t) ucData);
-
-  uint16_t dt = ucData>>16;
-
-  EEPROM_write_word(uiAddress+2, dt);
-
-}
-
-uint32_t EEPROM_read(unsigned int uiAddress)
-
-{
-
-  uint32_t dt = EEPROM_read_word(uiAddress+2)*65536;
-
-  asm("nop");
-
-  dt += EEPROM_read_word(uiAddress);
-
-  return dt;
-
-}

@@ -20,14 +20,12 @@
 
 #include <string.h>
 
-//#include <windows.h>
-
 #include "lcd.h"
 
 #include "eeprom.h"
 
 #include "button.h"
 
-//—————————————-
+//—————————————
 
 #endif /* MAIN_H_ */
