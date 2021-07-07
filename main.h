@@ -26,6 +26,8 @@
 
 #include "button.h"
 
-//—————————————
+#include "OneWire.h"
+
+#include "config.h"
 
 #endif /* MAIN_H_ */

@@ -5,6 +5,9 @@
 int main (void)
 {	
 //--------------------------------------------------------------------------
+	oneWireInit(PINB2);
+	double temperature;
+//--------------------------------------------------------------------------
 	DDRD |= (1 << PD3)|(1 << PD2)|(1 << PD1)|(1 << PD0); // Порт вывода
 	DDRD &= ~(1 << PD7)|(1 << PD6)|(1 << PD5)|(1 << PD4); // Порт ввода
 //--------------------------------------------------------------------------	
@@ -55,17 +58,35 @@ int main (void)
 //--------------------------------------------------------------------------	
 	while(1) 
 	{
+		temperature = getTemp();
+		char text[17] = "T = ";
+		int fs[2];
+		char num[5];
+		explodeDoubleNumber(fs, temperature);
+		if (temperature < 0) 
+		{
+			strcat(text, "-");
+		}
+		itoa(fs[0], num, 10);
+		strcat(text, num);
+		strcat(text, ".");
+		itoa(fs[1], num, 10);
+		strcat(text, num);
+		strcat(text, "'C");
+////////////////////////////////////////////////////////////////////////////		
 		memset(Result, 0, sizeof Result);//------------------
 		f = -1;//------------------
 		lcdClear();
-		_delay_ms(50);
+		_delay_ms(50);	
 ////////////////////////////////////////////////////////////////////////////		
 		for(m=0; m<450; m++)
-		{ 
-			lcdGotoXY(0,0); 
-			lcdPuts("Enter code:"); 
-			Result_Copy = atol(Result);
+		{ 	
+			lcdGotoXY(0, 0);
+			lcdPuts(text);
 			lcdGotoXY(1,0); 
+			lcdPuts("Code:"); 
+			Result_Copy = atol(Result);
+			lcdGotoXY(1,6); 
 			lcdPuts(Result); 	
 			// Выводим значение нажатой кнопки на индикатор
 			for (j=0; j<5; j++)
@@ -85,6 +106,31 @@ int main (void)
 					//_delay_ms(30);
 					break;
 				}
+			}
+////////////////////////////////////////////////////////////////////////////
+			if (PINB & (1<<PB5)) 
+			{
+				while(PINB & (1<<PB5))
+				{
+					if (!PINB & (1<<PB5)) 
+					{
+						break;
+					}	
+				}	
+				lcdClear();
+				_delay_ms(50);
+				for(j=0; j<=20; j++)
+				{
+					lcdGotoXY(1,4); 
+					lcdPuts("Unlocked"); 
+					//Включаем порт реле
+					PORTB |=(1<<4);    //высокий уровень
+					//зеленый светодиод
+					PORTB |=(1<<5);    //высокий уровень 
+					_delay_ms(100);
+				}
+				PORTB = 0x00;
+				break;
 			}
 ////////////////////////////////////////////////////////////////////////////			
 			if(scan_key()==10)  
@@ -470,25 +516,22 @@ int main (void)
 										//_delay_ms(30);
 										if(Code[4]!=0) 
 										{
-											if (Code[0] != 0)
+											n = 0;
+											eeprom_busy_wait();
+											eeprom_write_dword(n, Code_Copy);
+											lcdClear();
+											_delay_ms(50);
+											for(iii=0; iii<=5; iii++)
 											{
-												n = 0;
-												eeprom_busy_wait();
-												eeprom_write_dword(n, Code_Copy);
-												lcdClear();
-												_delay_ms(50);
-												for(iii=0; iii<=5; iii++)
-												{
-													lcdGotoXY(1,5);
-													lcdPuts("Changed");
-													//зеленый светодиод
-													PORTB |=(1<<5);    //высокий уровень
-													_delay_ms(100);
-												}
-												PORTB = 0x00;
-												i = 0;
-												break;
+												lcdGotoXY(1,5);
+												lcdPuts("Changed");
+												//зеленый светодиод
+												PORTB |=(1<<5);    //высокий уровень
+												_delay_ms(100);
 											}
+											PORTB = 0x00;
+											i = 0;
+											break;
 										}
 										else 
 										{
