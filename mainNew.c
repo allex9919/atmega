@@ -5,16 +5,18 @@
 int main (void)
 {	
 //--------------------------------------------------------------------------
-	//oneWireInit(PINB2);
-	//double temperature;
-	//char temp;
+	oneWireInit(PINB2);
+	double temperature;
 //--------------------------------------------------------------------------
 	DDRD |= (1 << PD3)|(1 << PD2)|(1 << PD1)|(1 << PD0); // Порт вывода
 	DDRD &= ~(1 << PD7)|(1 << PD6)|(1 << PD5)|(1 << PD4); // Порт ввода
 //--------------------------------------------------------------------------	
-	DDRB |=(1<<4);    //инициализируем как вход
-	DDRB |=(1<<5);    //инициализируем как вход
-	DDRB |=(1<<6);    //инициализируем как вход
+	DDRB |= (1<<1);    //инициализируем как вход
+	DDRB |= (1<<2);    //инициализируем как вход
+	DDRB |= (1<<3);    //инициализируем как вход
+	DDRB |= (1<<4);    //инициализируем как вход
+	DDRB |= (1<<5);    //инициализируем как вход
+	DDRB |= (1<<6);    //инициализируем как вход
 //--------------------------------------------------------------------------	
 	PORTD = 0xF0; // Устанавливаем лог. 1 в порт ввода
 	_delay_ms(10);
@@ -25,15 +27,15 @@ int main (void)
 	lcdSetDisplay(LCD_DISPLAY_ON);
 	_delay_ms(10);
 //--------------------------------------------------------------------------	
-	uint32_t mem = 11111;
+	/*uint32_t mem = 11111;
 	uint32_t adr = 0;
 	eeprom_busy_wait();
-	eeprom_write_dword(adr, mem);
+	eeprom_write_dword(adr, mem);*/
 //--------------------------------------------------------------------------	
-	uint32_t mem2 = 22222;
+	/*uint32_t mem2 = 22222;
 	uint32_t adr2 = 4;
 	eeprom_busy_wait();
-	eeprom_write_dword(adr2, mem2);
+	eeprom_write_dword(adr2, mem2);*/
 //--------------------------------------------------------------------------
 	unsigned short m; // объявляем переменную для цикла
 	unsigned short i; // объявляем переменную для цикла
@@ -59,8 +61,21 @@ int main (void)
 //--------------------------------------------------------------------------	
 	while(1) 
 	{
-		//temperature = getTemp();
-		//temp = printTemp(temperature);
+		temperature = getTemp();
+		char text[17] = "T = ";
+		int fs[2];
+		char num[5];
+		explodeDoubleNumber(fs, temperature);
+		if (temperature < 0) 
+		{
+			strcat(text, "-");
+		}
+		itoa(fs[0], num, 10);
+		strcat(text, num);
+		strcat(text, ".");
+		itoa(fs[1], num, 10);
+		strcat(text, num);
+		strcat(text, "'C");
 ////////////////////////////////////////////////////////////////////////////		
 		memset(Result, 0, sizeof Result);//------------------
 		f = -1;//------------------
@@ -69,8 +84,8 @@ int main (void)
 ////////////////////////////////////////////////////////////////////////////		
 		for(m=0; m<450; m++)
 		{ 	
-			//lcdGotoXY(0, 0);
-			//lcdPuts(temp);
+			lcdGotoXY(0, 0);
+			lcdPuts(text);
 			lcdGotoXY(1,0); 
 			lcdPuts("Code:"); 
 			Result_Copy = atol(Result);
@@ -96,35 +111,35 @@ int main (void)
 				}
 			}
 ////////////////////////////////////////////////////////////////////////////
-			if (PINB & (1<<PB5)) 
+			if (PINB & (1<<PB4)) 
 			{
-				while(PINB & (1<<PB5))
+				while(PINB & (1<<PB4))
 				{
-					if (!PINB & (1<<PB5)) 
+					if (!PINB & (1<<PB4)) 
 					{
 						break;
 					}	
 				}	
 				lcdClear();
 				_delay_ms(50);
-				for(j=0; j<=20; j++)
+				for(j=0; j<=60; j++)
 				{
 					lcdGotoXY(1,4); 
 					lcdPuts("Unlocked"); 
 					//Включаем порт реле
-					PORTB |=(1<<4);    //высокий уровень
-					//зеленый светодиод
-					PORTB |=(1<<5);    //высокий уровень 
+					//PORTB |=(1<<4);    //высокий уровень
+					//Включаем клапан
+					PORTB |=(1<<3);    //высокий уровень 
 					_delay_ms(100);
 				}
 				PORTB = 0x00;
 				break;
 			}
 ////////////////////////////////////////////////////////////////////////////
-			n = 2;
+			n = 8;
 			eeprom_busy_wait();
 			var = eeprom_read_dword(n);
-			if (temperature > var) 
+			if (fs[0] > var) 
 			{	
 				lcdClear();
 				_delay_ms(50);
@@ -133,7 +148,7 @@ int main (void)
 					lcdGotoXY(1,4); 
 					lcdPuts("Unlocked"); 
 					//Включаем порт реле
-					PORTB |=(1<<4);    //высокий уровень
+					//PORTB |=(1<<4);    //высокий уровень
 					//зеленый светодиод
 					PORTB |=(1<<5);    //высокий уровень 
 					_delay_ms(100);
@@ -147,7 +162,7 @@ int main (void)
 				//_delay_ms(30);
 				if(Result[4]!=0) 
 				{
-					n = 1;
+					n = 4;
 					eeprom_busy_wait();
 					var = eeprom_read_dword(n);
 					if  (Result_Copy  ==  var) 
@@ -159,7 +174,7 @@ int main (void)
 							lcdGotoXY(1,4); 
 							lcdPuts("Unlocked"); 
 							//Включаем порт реле
-							PORTB |=(1<<4);    //высокий уровень
+							//PORTB |=(1<<4);    //высокий уровень
 							//зеленый светодиод
 							PORTB |=(1<<5);    //высокий уровень 
 							_delay_ms(100);
@@ -208,7 +223,7 @@ int main (void)
 								//_delay_ms(30);
 								if(Code[1]!=0) 
 								{
-									n = 2;
+									n = 8;
 									eeprom_busy_wait();
 									eeprom_write_dword(n, Code_Copy);
 									lcdClear();

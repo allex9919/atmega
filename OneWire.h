@@ -1,7 +1,13 @@
 #ifndef ONEWIRE_H_
 #define ONEWIRE_H_
+
+#define DEVICES_ERROR  1
  
 #include "main.h" 
+
+#define ONE_WIRE_PORT      PORTB
+#define ONE_WIRE_DDR       DDRB
+#define ONE_WIRE_PIN       PINB
  
 #define CMD_CONVERTTEMP    0x44
 #define CMD_RSCRATCHPAD    0xbe

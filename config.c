@@ -9,7 +9,7 @@
 		numbers[1] = abs((int) ((flt - ((int) flt)) * 10));
 	}
 
-/*	 
+	 
 	char printTemp(double d) 
 	{
 		char text[17] = "T = ";
@@ -29,7 +29,7 @@
 		strcat(text, "'C");
 		return text;
 	}
-*/
+
 	 
 	double getTemp(void) 
 	{
