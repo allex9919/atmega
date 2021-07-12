@@ -22,7 +22,7 @@
 
 #include "lcd.h"
 
-#include "eeprom.h"
+//#include "eeprom.h"
 
 #include "button.h"
 
