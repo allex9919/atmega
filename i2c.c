@@ -1,4 +1,4 @@
-#include “I2C.h”
+#include "i2c.h"
 
 void I2C_init(void){
 TWSR=(0<<TWPS1)|(0<<TWPS0);// настройка делителя

@@ -2,6 +2,8 @@
 
 #define I2C_H_
 
+#include "main.h"
+
 //—————————————-
 
 void I2C_init(void);// инициализация

@@ -1,12 +1,110 @@
 #include "main.h"
 
+#define DHT_PORT PORTC
+#define DHT_DDR DDRC
+#define DHT_PIN PINC
+
+#define DHT_PIN_nomer 3
+
+void setup() {
+// настраиваем порты
+//DDRB = 0x00;
+//PORTB = 0x00;
+DDRC = 0x00;
+PORTC = 0x00;
+//DDRD = 0x00;
+//PORTD = 0x00;
+// включаем I2C шину и экран
+I2C_init();
+//LCD_ini();
+
+}
+
+typedef struct temphumi { // структура данных для DHT11
+uint8_t temp;
+uint8_t humi;
+} temphumi_t;
+
+int DHT_read(uint8_t _PIN, temphumi_t* _DATA) {
+
+	// обнуляем переменную
+	uint8_t DHT_RESPONSE[5] = {0, 0, 0, 0, 0};
+
+	// формируем задержки для старта датчика
+
+	DHT_DDR |= (1 << _PIN);
+	DHT_PORT &= ~(1 << _PIN);
+
+	_delay_ms(18);
+
+	DHT_PORT |= (1 << _PIN);
+	DHT_DDR &= ~(1 << _PIN);
+
+	_delay_us(40);
+
+	//смотрим, что пришло через 54us и 80us
+
+	if(DHT_PIN & (1 << _PIN)) {
+	return 0;
+	}
+
+	_delay_us(54);
+
+	if(!DHT_PIN & (1 << _PIN)) {
+	return 0;
+	}
+
+	_delay_us(80);
+
+	//если датчик готов с нами работать - читаем 5 байт
+
+	uint8_t _bit, _byte;
+
+	while (DHT_PIN & (1 << _PIN));
+
+	for (_byte = 0; _byte < 5; _byte++) {
+
+	DHT_RESPONSE[_byte] = 0;
+
+	for (_bit = 0; _bit < 8; _bit++) {
+
+	while (!(DHT_PIN & (1 << _PIN))); // ждем ....
+
+	_delay_us(30);
+
+	if (DHT_PIN & (1 << _PIN)) { // если пришла 1, записываем ее в нужное место
+	DHT_RESPONSE[_byte] |= 1 << (7 - _bit);
+	}
+
+	while (DHT_PIN & (1 << _PIN)); // ждем окончания сигнала
+	}
+	}
+
+	// если пришли все  0 - ошибка приема данных
+	if (DHT_RESPONSE[0] + DHT_RESPONSE[1] + DHT_RESPONSE[2] + DHT_RESPONSE[3] == 0) { return 0; }
+
+	// проверяем данные на ликвидность
+	if (DHT_RESPONSE[0] + DHT_RESPONSE[1] + DHT_RESPONSE[2] + DHT_RESPONSE[3] != DHT_RESPONSE[4]) { return 0; }
+
+	// если проверка на ликвидность прошла - читаем данные.
+	_DATA -> humi = DHT_RESPONSE[0]; // влажность
+	_DATA -> temp = DHT_RESPONSE[2];// температура
+
+	return 1;
+}
+
 //—————————————-
 
 int main (void)
 {	
 //--------------------------------------------------------------------------
-	oneWireInit(PINB2);
-	double temperature;
+	char buff1[3]; // переменная для хранения данных которые выводим на экран
+	char buff2[3]; // переменная для хранения данных которые выводим на экран
+	temphumi_t DHT_DATA = {0 ,0}; //переменная для хранения данных которые считываем с датчика
+	setup();
+//--------------------------------------------------------------------------
+	//oneWireInit(PINB2);
+	//double temperature;
 //--------------------------------------------------------------------------
 	DDRD |= (1 << PD3)|(1 << PD2)|(1 << PD1)|(1 << PD0); // Порт вывода
 	DDRD &= ~(1 << PD7)|(1 << PD6)|(1 << PD5)|(1 << PD4); // Порт ввода
@@ -55,8 +153,36 @@ int main (void)
 ////////////////////////////////////////////////////////////////////////////		
 //--------------------------------------------------------------------------	
 	while(1) 
-	{		
-		temperature = getTemp();
+	{	
+		PORTC = 0x00;
+		if (DHT_read(DHT_PIN_nomer, &DHT_DATA) == 1) 
+		{// если данные пришли
+			sprintf(buff1, "%d", DHT_DATA.temp);
+			//setpos(5, 0);
+			//str_lcd(buff);// выводим температуру
+
+			sprintf(buff2, "%d", DHT_DATA.humi);
+			//setpos(5, 2);
+			//str_lcd(buff);// выводим влажность
+		}
+		/*else 
+		{// если ответа от датчика нет
+			//setpos(5, 0);
+			//str_lcd("----");
+			//setpos(5, 2);
+			//str_lcd("----");
+			memset(buff1, "-", sizeof buff1);
+			memset(buff2, "-", sizeof buff2);
+		}*/
+		for(j=0; j<=50; j++)
+		{
+			//зеленый светодиод
+			PORTB |=(1<<6);    //высокий уровень
+			_delay_ms(100);
+		}
+		PORTB = 0x00;
+////////////////////////////////////////////////////////////////////////////
+		/*temperature = getTemp();
 		char text[17] = "T = ";
 		int fs[2];
 		char num[5];
@@ -70,7 +196,7 @@ int main (void)
 		strcat(text, ".");
 		itoa(fs[1], num, 10);
 		strcat(text, num);
-		strcat(text, "'C");
+		strcat(text, "'C");*/
 ////////////////////////////////////////////////////////////////////////////		
 		day++;
 ////////////////////////////////////////////////////////////////////////////		
@@ -104,7 +230,8 @@ int main (void)
 			n = 8;
 			eeprom_busy_wait();
 			var = eeprom_read_dword(n);
-			if (fs[0] > var) 
+			//if (fs[0] > var)
+			if (10 > var)	
 			{	
 				if (day > 240)
 				{
@@ -140,8 +267,12 @@ int main (void)
 					lcdClear();
 					_delay_ms(50);
 				}
-				lcdGotoXY(0, 0);
-				lcdPuts(text);
+				//lcdGotoXY(0, 0);
+				//lcdPuts(text);
+				lcdGotoXY(0,0); 
+				lcdPuts(buff1);
+				lcdGotoXY(0,7); 
+				lcdPuts(buff2);
 				lcdGotoXY(1,0); 
 				lcdPuts("Code:"); 
 				Result_Copy = atol(Result);
