@@ -1,9 +1,25 @@
 #include "main.h"
 
-//—————————————-
+//—————————————
 
 int main (void)
 {	
+//--------------------------------------------------------------------------
+	oneWireInit(PINB2);
+
+	double temperature;
+	uint8_t tn = 8;
+	uint64_t roms[tn];
+	searchRom(roms, &tn);
+	char txt[17] = "No.[";
+	char num[5];
+	itoa(tn, num, 10);
+	strcat(txt, num);
+	strcat(txt, "]");
+	//lcdClear();
+	//lcdGotoXY(0, 0);
+	//lcdPuts(txt);
+	//_delay_ms(2000);
 //--------------------------------------------------------------------------
 	DDRD |= (1 << PD3)|(1 << PD2)|(1 << PD1)|(1 << PD0); // Порт вывода
 	DDRD &= ~(1 << PD7)|(1 << PD6)|(1 << PD5)|(1 << PD4); // Порт ввода
@@ -45,6 +61,8 @@ int main (void)
 	char Num[4] = "";
 	int cycle = 0;
 	int cycle2 = 0; 
+	uint8_t t = 0;
+	char temp[17] = "";
 //--------------------------------------------------------------------------	
 ////////////////////////////////////////////////////////////////////////////		
 //--------------------------------------------------------------------------	
@@ -81,6 +99,14 @@ int main (void)
 				_delay_ms(10);
 				lcdSetDisplay(LCD_DISPLAY_ON);
 				_delay_ms(10);
+////////////////////////////////////////////////////////////////////////////				
+				for (t = 0; t < tn; t++) 
+				{
+					temperature = getTemp(roms[t]);
+					strcat(temp, printTemp(temperature, temp));
+					_delay_ms(100);
+				}
+////////////////////////////////////////////////////////////////////////////
 			}
 			memset(Result, 0, sizeof Result);//------------------
 			f = -1;//------------------
@@ -111,11 +137,17 @@ int main (void)
 					lcdClear();
 					_delay_ms(50);
 				}
+////////////////////////////////////////////////////////////////////////////				
+				lcdGotoXY(0, 0);
+				lcdPuts(txt);
+////////////////////////////////////////////////////////////////////////////				
+				lcdGotoXY(0, 7);
+				lcdPuts(temp);
 ////////////////////////////////////////////////////////////////////////////
-				lcdGotoXY(0,0); 
-				lcdPuts("Enter code:"); 
-				Result_Copy = atol(Result);
 				lcdGotoXY(1,0); 
+				lcdPuts("Code:"); 
+				Result_Copy = atol(Result);
+				lcdGotoXY(1,6); 
 				lcdPuts(Result); 	
 				// Выводим значение нажатой кнопки на индикатор
 				for (j=0; j<5; j++)
@@ -247,7 +279,7 @@ int main (void)
 												i = 0;
 												break;
 											}
-											else 
+											/*else 
 											{
 												//memset(Code, 0, sizeof Code);//----------
 												lcdClear();
@@ -263,7 +295,7 @@ int main (void)
 												PORTB &= ~(1<<6);    //низкий уровень
 												lcdClear();
 												_delay_ms(50);
-											}
+											}*/
 										}
 //--------------------------------------------------------------------------								
 										if(scan_key()==12)
@@ -358,7 +390,7 @@ int main (void)
 												i = 0;
 												break;
 											}
-											else 
+											/*else 
 											{
 												//memset(Code, 0, sizeof Code);//----------
 												lcdClear();
@@ -374,7 +406,7 @@ int main (void)
 												PORTB &= ~(1<<6);    //низкий уровень
 												lcdClear();
 												_delay_ms(50);
-											}
+											}*/
 										}
 //--------------------------------------------------------------------------								
 										if(scan_key()==12)
@@ -542,7 +574,7 @@ int main (void)
 													break;
 												}
 											}
-											else 
+											/*else 
 											{
 												//memset(Code, 0, sizeof Code);//----------
 												lcdClear();
@@ -558,7 +590,7 @@ int main (void)
 												PORTB &= ~(1<<6);    //низкий уровень
 												lcdClear();
 												_delay_ms(50);
-											}
+											}*/
 										}
 //--------------------------------------------------------------------------								
 										if(scan_key()==12)

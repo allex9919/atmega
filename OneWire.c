@@ -1,63 +1,64 @@
+#define DEVICES_ERROR  1
 #include "OneWire.h"
- 
+
 uint8_t ONE_WIRE_DQ = PINB2;
- 
+
 void oneWireInit(uint8_t pin) {
   ONE_WIRE_DQ = pin;
   ONE_WIRE_PORT |= (1 << ONE_WIRE_DQ);
-  ONE_WIRE_DDR |= (1 << ONE_WIRE_DQ); // РІС‹С…РѕРґ
+  ONE_WIRE_DDR |= (1 << ONE_WIRE_DQ); // выход
 }
- 
+
 /*
- * СЃР±СЂРѕСЃ
+ * сброс
  */
 uint8_t reset() {
   uint8_t response;
- 
-  // РёРјРїСѓР»СЊСЃ СЃР±СЂРѕСЃР°, РјРёРЅРёРјСѓРј 480us
+
+  // импульс сброса, минимум 480us
   ONE_WIRE_PORT &= ~(1 << ONE_WIRE_DQ);
-  ONE_WIRE_DDR |= (1 << ONE_WIRE_DQ); // РІС‹С…РѕРґ
+  ONE_WIRE_DDR |= (1 << ONE_WIRE_DQ); // выход
   _delay_us(480);
- 
-  // РљРѕРіРґР° ONE WIRE СѓСЃС‚СЂРѕР№СЃС‚РІРѕ РѕР±РЅР°СЂСѓР¶РёРІР°РµС‚ РїРѕР»РѕР¶РёС‚РµР»СЊРЅС‹Р№ РїРµСЂРµРїР°Рґ, РѕРЅ Р¶РґРµС‚ РѕС‚ 15us РґРѕ 60us
-  ONE_WIRE_DDR &= ~(1 << ONE_WIRE_DQ); // РІС…РѕРґ
+
+  // Когда ONE WIRE устройство обнаруживает положительный перепад, он ждет от 15us до 60us
+  ONE_WIRE_DDR &= ~(1 << ONE_WIRE_DQ); // вход
   _delay_us(60);
- 
-  // Рё Р·Р°С‚РµРј РїРµСЂРµРґР°РµС‚ РёРјРїСѓР»СЊСЃ РїСЂРёСЃСѓС‚СЃС‚РІРёСЏ, РїРµСЂРµРјРµС‰Р°СЏ С€РёРЅСѓ РІ Р»РѕРіРёС‡РµСЃРєРёР№ В«0В» РЅР° РґР»РёС‚РµР»СЊРЅРѕСЃС‚СЊ РѕС‚ 60us РґРѕ 240us.
+
+  // и затем передает импульс присутствия, перемещая шину в логический «0» на длительность от 60us до 240us.
   response = (ONE_WIRE_PIN & (1 << ONE_WIRE_DQ));
   _delay_us(410);
- 
-  // РµСЃР»Рё 0, Р·РЅР°С‡РёС‚ РµСЃС‚СЊ РѕС‚РІРµС‚ РѕС‚ РґР°С‚С‡РёРєР°, РµСЃР»Рё 1 - РЅРµС‚
+
+  // если 0, значит есть ответ от датчика, если 1 - нет
   return response;
 }
- 
+
 /*
- * РѕС‚РїСЂР°РІРёС‚СЊ РѕРґРёРЅ Р±РёС‚
+ * отправить один бит
  */
 void writeBit(uint8_t bit) {
   if (bit & 1) {
     cli();
-    // Р»РѕРіРёС‡РµСЃРєРёР№ В«0В» РЅР° 1us
+    // логический «0» на 1us
     ONE_WIRE_PORT &= ~(1 << ONE_WIRE_DQ);
-    ONE_WIRE_DDR |= (1 << ONE_WIRE_DQ); // РІС‹С…РѕРґ
+    ONE_WIRE_DDR |= (1 << ONE_WIRE_DQ); // выход
     _delay_us(10);
     sei();
-    ONE_WIRE_DDR &= ~(1 << ONE_WIRE_DQ); // РІС…РѕРґ
+    ONE_WIRE_DDR &= ~(1 << ONE_WIRE_DQ); // вход
     _delay_us(55);
   } else {
     cli();
-    // Р»РѕРіРёС‡РµСЃРєРёР№ В«0В» РЅР° 1us
+    // логический «0» на 1us
     ONE_WIRE_PORT &= ~(1 << ONE_WIRE_DQ);
-    ONE_WIRE_DDR |= (1 << ONE_WIRE_DQ); // РІС‹С…РѕРґ
+    ONE_WIRE_DDR |= (1 << ONE_WIRE_DQ); // выход
     _delay_us(65);
-    ONE_WIRE_DDR &= ~(1 << ONE_WIRE_DQ); // РІС…РѕРґ
+    ONE_WIRE_DDR &= ~(1 << ONE_WIRE_DQ); // вход
     sei();
     _delay_us(5);
   }
 }
- 
+
 /*
- * РѕС‚РїСЂР°РІРёС‚СЊ РѕРґРёРЅ Р±Р°Р№С‚
+ * отправить один байт
  */
 void writeByte(uint8_t byte) {
   uint8_t i = 8;
@@ -66,9 +67,9 @@ void writeByte(uint8_t byte) {
     byte >>= 1;
   }
 }
- 
+
 /*
- * РїРѕР»СѓС‡РёС‚СЊ РѕРґРёРЅ Р±Р°Р№С‚
+ * получить один байт
  */
 uint8_t readByte() {
   uint8_t i = 8, byte = 0;
@@ -78,43 +79,43 @@ uint8_t readByte() {
   }
   return byte;
 }
- 
+
 /*
- * РїРѕР»СѓС‡РёС‚СЊ РѕРґРёРЅ Р±РёС‚
+ * получить один бит
  */
 uint8_t readBit(void) {
   uint8_t bit = 0;
   cli();
-  // Р»РѕРіРёС‡РµСЃРєРёР№ В«0В» РЅР° 1us
+  // логический «0» на 1us
   ONE_WIRE_PORT &= ~(1 << ONE_WIRE_DQ);
-  ONE_WIRE_DDR |= (1 << ONE_WIRE_DQ); // РІС…РѕРґ
+  ONE_WIRE_DDR |= (1 << ONE_WIRE_DQ); // вход
   _delay_us(3);
- 
-  // РѕСЃРІРѕР±РѕРґРёС‚СЊ Р»РёРЅРёСЋ Рё Р¶РґР°С‚СЊ 14us
-  ONE_WIRE_DDR &= ~(1 << ONE_WIRE_DQ); // РІС…РѕРґ
+
+  // освободить линию и ждать 14us
+  ONE_WIRE_DDR &= ~(1 << ONE_WIRE_DQ); // вход
   _delay_us(10);
- 
-  // РїСЂРѕС‡РёС‚Р°С‚СЊ Р·РЅР°С‡РµРЅРёРµ
+
+  // прочитать значение
   if (ONE_WIRE_PIN & (1 << ONE_WIRE_DQ)) {
     bit = 1;
   }
- 
-  // Р¶РґР°С‚СЊ 45us Рё РІРµСЂРЅСѓС‚СЊ Р·РЅР°С‡РµРЅРёРµ
+
+  // ждать 45us и вернуть значение
   sei();
   _delay_us(45);
   return bit;
 }
- 
+
 /*
- * С‡РёС‚Р°С‚СЊ ROM РїРѕРґС‡РёРЅРµРЅРЅРѕРіРѕ СѓСЃС‚СЂРѕР№СЃС‚РІР° (РєРѕРґ 64 Р±РёС‚Р°)
+ * читать ROM подчиненного устройства (код 64 бита)
  */
 uint64_t readRoom(void) {
   uint64_t oneWireDevice;
   if(reset() == 0) {
     writeByte(CMD_READROM);
-    //  РєРѕРґ СЃРµРјРµР№СЃС‚РІР°
+    //  код семейства
     oneWireDevice = readByte();
-    // СЃРµСЂРёР№РЅС‹Р№ РЅРѕРјРµСЂ
+    // серийный номер
     oneWireDevice |= (uint16_t)readByte()<<8 | (uint32_t)readByte()<<16 | (uint32_t)readByte()<<24 | (uint64_t)readByte()<<32 | (uint64_t)readByte()<<40 | (uint64_t)readByte()<<48;
     // CRC
     oneWireDevice |= (uint64_t)readByte()<<56;
@@ -123,11 +124,11 @@ uint64_t readRoom(void) {
   }
   return oneWireDevice;
 }
- 
+
 /*
- * РљРѕРјР°РЅРґР° СЃРѕРѕС‚РІРµС‚СЃС‚РІРёСЏ ROM, СЃРѕРїСЂРѕРІРѕР¶РґР°РµРјР°СЏ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚СЊСЋ 
- * РєРѕРґР° ROM РЅР° 64 Р±РёС‚Р° РїРѕР·РІРѕР»СЏРµС‚ СѓСЃС‚СЂРѕР№СЃС‚РІСѓ СѓРїСЂР°РІР»РµРЅРёСЏ С€РёРЅРѕР№ 
- * РѕР±СЂР°С‰Р°С‚СЊСЃСЏ Рє РѕРїСЂРµРґРµР»РµРЅРЅРѕРјСѓ РїРѕРґС‡РёРЅРµРЅРЅРѕРјСѓ СѓСЃС‚СЂРѕР№СЃС‚РІСѓ РЅР° С€РёРЅРµ.
+ * Команда соответствия ROM, сопровождаемая последовательностью 
+ * кода ROM на 64 бита позволяет устройству управления шиной 
+ * обращаться к определенному подчиненному устройству на шине.
  */
 void setDevice(uint64_t rom) {
   uint8_t i = 64;
@@ -138,40 +139,40 @@ void setDevice(uint64_t rom) {
     rom >>= 1;
   }
 }
- 
+
 /*
- * РїСЂРѕРІРµСЃРєР° CRC, РІРѕР·РІСЂР°С‰Р°РµС‚ "0", РµСЃР»Рё РЅРµС‚ РѕС€РёР±РѕРє
- * Рё РЅРµ "0", РµСЃР»Рё РµСЃС‚СЊ РѕС€РёР±РєРё
+ * провеска CRC, возвращает "0", если нет ошибок
+ * и не "0", если есть ошибки
  */
 uint8_t crcCheck(uint64_t data8x8bit, uint8_t len) {
   uint8_t dat, crc = 0, fb, stByte = 0;
   do {
     dat = (uint8_t) (data8x8bit >> (stByte * 8));
-    for (int i = 0; i < 8; i++) {  // СЃС‡РµС‚С‡РёРє Р±РёС‚РѕРІ РІ Р±Р°Р№С‚Рµ
+    for (int i = 0; i < 8; i++) {  // счетчик битов в байте
       fb = crc ^ dat;
       fb &= 1;
       crc >>= 1;
       dat >>= 1;
       if (fb == 1) {
-        crc ^= 0x8c; // РїРѕР»РёРЅРѕРј
+        crc ^= 0x8c; // полином
       }
     }
     stByte++;
-  } while (stByte < len); // СЃС‡РµС‚С‡РёРє Р±Р°Р№С‚РѕРІ РІ РјР°СЃСЃРёРІРµ
+  } while (stByte < len); // счетчик байтов в массиве
   return crc;
 }
- 
+
 /*
- * РїРѕРёСЃРє СѓСЃС‚СЂРѕР№СЃС‚РІ
+ * поиск устройств
  */
-void searchRom(uint64_t * roms, uint8_t n) {
+void searchRom(uint64_t * roms, uint8_t * n) {
   uint64_t lastAddress = 0;
   uint8_t lastDiscrepancy = 0;
   uint8_t err = 0;
   uint8_t i = 0;
   do {
     do {
-      lastAddress = searchNextAddress(lastAddress, lastDiscrepancy);
+      lastAddress = searchNextAddress(lastAddress, &lastDiscrepancy);
       if(lastAddress != DEVICES_ERROR) {
         uint8_t crc = crcCheck(lastAddress, 8);
         if (crc == 0) {
@@ -187,33 +188,33 @@ void searchRom(uint64_t * roms, uint8_t n) {
         return;
       }
     } while (err != 0);
-  } while (lastDiscrepancy != 0 && i < n);
-  n = i;
+  } while (lastDiscrepancy != 0 && i < *n);
+  *n = i;
 }
- 
+
 /*
- * РїРѕРёСЃРє СЃР»РµРґСѓСЋС‰РµРіРѕ РїРѕРґРєР»СЋС‡РµРЅРЅРѕРіРѕ СѓСЃС‚СЂРѕР№СЃС‚РІР°
+ * поиск следующего подключенного устройства
  */
-uint64_t searchNextAddress(uint64_t lastAddress, uint8_t lastDiscrepancy) {
+uint64_t searchNextAddress(uint64_t lastAddress, uint8_t * lastDiscrepancy) {
   uint8_t searchDirection = 0;
   uint64_t newAddress = 0;
   uint8_t idBitNumber = 1;
   uint8_t lastZero = 0;
   reset();
   writeByte(CMD_SEARCHROM);
- 
+
   while (idBitNumber < 65) {
     uint8_t idBit = readBit();
     uint8_t cmpIdBit = readBit();
- 
+
     // id_bit = cmp_id_bit = 1
     if (idBit == 1 && cmpIdBit == 1) {
       return DEVICES_ERROR;
     } else if (idBit == 0 && cmpIdBit == 0) {
       // id_bit = cmp_id_bit = 0
-      if (idBitNumber == lastDiscrepancy) {
+      if (idBitNumber == *lastDiscrepancy) {
         searchDirection = 1;
-      } else if (idBitNumber > lastDiscrepancy) {
+      } else if (idBitNumber > *lastDiscrepancy) {
         searchDirection = 0;
       } else {
         if ((uint8_t) (lastAddress >> (idBitNumber - 1)) & 1) {
@@ -233,12 +234,12 @@ uint64_t searchNextAddress(uint64_t lastAddress, uint8_t lastDiscrepancy) {
     writeBit(searchDirection);
     idBitNumber++;
   }
-  lastDiscrepancy = lastZero;
+  *lastDiscrepancy = lastZero;
   return newAddress;
 }
- 
+
 /*
- * РїСЂРѕРїСѓСЃС‚РёС‚СЊ ROM
+ * пропустить ROM
  */
 void skipRom() {
   reset();
