@@ -5,22 +5,6 @@
 int main (void)
 {	
 //--------------------------------------------------------------------------
-	oneWireInit(PINB2);
-
-	double temperature;
-	uint8_t tn = 8;
-	uint64_t roms[tn];
-	searchRom(roms, &tn);
-	char txt[17] = "No.[";
-	char num[5];
-	itoa(tn, num, 10);
-	strcat(txt, num);
-	strcat(txt, "]");
-	//lcdClear();
-	//lcdGotoXY(0, 0);
-	//lcdPuts(txt);
-	//_delay_ms(2000);
-//--------------------------------------------------------------------------
 	DDRD |= (1 << PD3)|(1 << PD2)|(1 << PD1)|(1 << PD0); // Порт вывода
 	DDRD &= ~(1 << PD7)|(1 << PD6)|(1 << PD5)|(1 << PD4); // Порт ввода
 	PORTD = 0xF0; // Устанавливаем лог. 1 в порт ввода
@@ -61,13 +45,12 @@ int main (void)
 	char Num[4] = "";
 	int cycle = 0;
 	int cycle2 = 0; 
-	uint8_t t = 0;
-	char temp[17] = "";
+	char text[17] = "T[";
 //--------------------------------------------------------------------------	
 ////////////////////////////////////////////////////////////////////////////		
 //--------------------------------------------------------------------------	
 	while(1) 
-	{
+	{		
 		if (PINB & (1<<PB5)) 
 		{
 			while(PINB & (1<<PB5))
@@ -99,15 +82,45 @@ int main (void)
 				_delay_ms(10);
 				lcdSetDisplay(LCD_DISPLAY_ON);
 				_delay_ms(10);
-////////////////////////////////////////////////////////////////////////////				
-				for (t = 0; t < tn; t++) 
+////////////////////////////////////////////////////////////////////////////					
+				oneWireInit(PINB2);
+
+				double temperature;
+				uint8_t tn = 8;
+				uint64_t roms[tn];
+				searchRom(roms, &tn);
+				char txt[17] = "No.[";
+				char num[5];
+				itoa(tn, num, 10);
+				strcat(txt, num);
+				strcat(txt, "]");
+				//for (uint8_t i = 0; i < tn; i++) 
+				//{
+					temperature = getTemp(roms[tn]);
+					//printTemp(temperature, i + 1);
+					//_delay_ms(1000);
+				//}
+				
+				int fs[2];
+				char num2[5];
+
+				itoa(tn, num2, 10);
+				strcat(text, num2);
+				strcat(text, "]=");
+
+				explodeDoubleNumber(fs, temperature);
+				if (temperature < 0) 
 				{
-					temperature = getTemp(roms[t]);
-					strcat(temp, printTemp(temperature, temp));
-					_delay_ms(100);
+					strcat(text, "-");
 				}
-////////////////////////////////////////////////////////////////////////////
-			}
+				itoa(fs[0], num2, 10);
+				strcat(text, num2);
+				strcat(text, ".");
+				itoa(fs[1], num2, 10);
+				strcat(text, num2);
+				strcat(text, "'C");
+			}	
+////////////////////////////////////////////////////////////////////////////			
 			memset(Result, 0, sizeof Result);//------------------
 			f = -1;//------------------
 			lcdClear();
@@ -137,12 +150,11 @@ int main (void)
 					lcdClear();
 					_delay_ms(50);
 				}
-////////////////////////////////////////////////////////////////////////////				
+////////////////////////////////////////////////////////////////////////////								
+				//lcdGotoXY(0, 0);
+				//lcdPuts(txt);
 				lcdGotoXY(0, 0);
-				lcdPuts(txt);
-////////////////////////////////////////////////////////////////////////////				
-				lcdGotoXY(0, 7);
-				lcdPuts(temp);
+				lcdPuts(text);
 ////////////////////////////////////////////////////////////////////////////
 				lcdGotoXY(1,0); 
 				lcdPuts("Code:"); 
@@ -201,7 +213,7 @@ int main (void)
 						n = 0;
 						eeprom_busy_wait();
 						var = eeprom_read_dword(n);
-						if (Result_Copy == var)  
+						/*if (Result_Copy == var)  
 						{
 							lcdClear();
 							_delay_ms(50);
@@ -295,7 +307,7 @@ int main (void)
 												PORTB &= ~(1<<6);    //низкий уровень
 												lcdClear();
 												_delay_ms(50);
-											}*/
+											}*//*
 										}
 //--------------------------------------------------------------------------								
 										if(scan_key()==12)
@@ -406,7 +418,7 @@ int main (void)
 												PORTB &= ~(1<<6);    //низкий уровень
 												lcdClear();
 												_delay_ms(50);
-											}*/
+											}*//*
 										}
 //--------------------------------------------------------------------------								
 										if(scan_key()==12)
@@ -590,7 +602,7 @@ int main (void)
 												PORTB &= ~(1<<6);    //низкий уровень
 												lcdClear();
 												_delay_ms(50);
-											}*/
+											}*//*
 										}
 //--------------------------------------------------------------------------								
 										if(scan_key()==12)
@@ -614,7 +626,7 @@ int main (void)
 								}
 								_delay_ms(10);
 							}
-						}
+						}*/
 						//memset(Result, 0, sizeof Result);//------------------
 						//f = -1;//------------------
 						break;
