@@ -45,7 +45,7 @@ int main (void)
 	char Num[4] = "";
 	int cycle = 0;
 	int cycle2 = 0; 
-	char text[17] = "T[";
+	char text[17] = "T=";
 //--------------------------------------------------------------------------	
 ////////////////////////////////////////////////////////////////////////////		
 //--------------------------------------------------------------------------	
@@ -86,40 +86,25 @@ int main (void)
 				oneWireInit(PINB2);
 
 				double temperature;
-				uint8_t tn = 8;
-				uint64_t roms[tn];
-				searchRom(roms, &tn);
-				char txt[17] = "No.[";
-				char num[5];
-				itoa(tn, num, 10);
-				strcat(txt, num);
-				strcat(txt, "]");
-				//for (uint8_t i = 0; i < tn; i++) 
-				//{
-					temperature = getTemp(roms[tn]);
-					//printTemp(temperature, i + 1);
-					//_delay_ms(1000);
-				//}
-				
-				int fs[2];
-				char num2[5];
 
-				itoa(tn, num2, 10);
-				strcat(text, num2);
-				strcat(text, "]=");
+				temperature = getTemp();
+				//printTemp(temperature);
+				//char text[17] = "T = ";
+				int fs[2];
+				char num[5];
 
 				explodeDoubleNumber(fs, temperature);
-				if (temperature < 0) 
-				{
-					strcat(text, "-");
+				if (temperature < 0) {
+				strcat(text, "-");
 				}
-				itoa(fs[0], num2, 10);
-				strcat(text, num2);
+				itoa(fs[0], num, 10);
+				strcat(text, num);
 				strcat(text, ".");
-				itoa(fs[1], num2, 10);
-				strcat(text, num2);
+				itoa(fs[1], num, 10);
+				strcat(text, num);
 				strcat(text, "'C");
-			}	
+				_delay_ms(100);
+			}
 ////////////////////////////////////////////////////////////////////////////			
 			memset(Result, 0, sizeof Result);//------------------
 			f = -1;//------------------
