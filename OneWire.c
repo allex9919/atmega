@@ -8,6 +8,7 @@
 #include "OneWire.h"
 
 static uint8_t ONE_WIRE_DQ = PINB2;
+unsigned short ow; // объявляем переменную для цикла
 
 void oneWireInit(uint8_t pin) {
   ONE_WIRE_DQ = pin;
@@ -25,14 +26,26 @@ uint8_t reset() {
   ONE_WIRE_PORT &= ~(1 << ONE_WIRE_DQ);
   ONE_WIRE_DDR |= (1 << ONE_WIRE_DQ); // выход
   _delay_us(480);
+  /*for(ow=0; ow<60; ow++)
+  {
+	 _delay_us(10);
+  }*/
 
   // Когда ONE WIRE устройство обнаруживает положительный перепад, он ждет от 15us до 60us
   ONE_WIRE_DDR &= ~(1 << ONE_WIRE_DQ); // вход
-  _delay_us(60);
+  _delay_us(20);
+  /*for(ow=0; ow<30; ow++)
+  {
+	 _delay_us(10);
+  }*/
 
   // и затем передает импульс присутствия, перемещая шину в логический «0» на длительность от 60us до 240us.
   response = (ONE_WIRE_PIN & (1 << ONE_WIRE_DQ));
-  _delay_us(410);
+  _delay_us(240);
+  /*for(ow=0; ow<41; ow++)
+  {
+	 _delay_us(10);
+  }*/
 
   // если 0, значит есть ответ от датчика, если 1 - нет
   return response;
@@ -99,7 +112,7 @@ uint8_t readBit(void) {
 
   // освободить линию и ждать 14us
   ONE_WIRE_DDR &= ~(1 << ONE_WIRE_DQ); // вход
-  _delay_us(10);
+  _delay_us(14);
 
   // прочитать значение
   if (ONE_WIRE_PIN & (1 << ONE_WIRE_DQ)) {

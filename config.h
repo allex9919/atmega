@@ -3,8 +3,6 @@
 
 #include "main.h"
 
-#undef F_CPU
-#define F_CPU              8000000UL
 #define ONE_WIRE_PORT      PORTB
 #define ONE_WIRE_DDR       DDRB
 #define ONE_WIRE_PIN       PINB

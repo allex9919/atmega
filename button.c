@@ -35,7 +35,7 @@ unsigned char scan_key(void)
 			break;
 		}
 	}
-	if ((PIND&_BV(key_value))!=0x00)
+	if (((PIND & (1<<key_value)) == 0)
 	{
 		return (key_value);
 	}

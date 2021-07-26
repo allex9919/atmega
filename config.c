@@ -32,11 +32,16 @@ double getTemp(void) {
   uint8_t temperatureL;
   uint8_t temperatureH;
   double retd = 0;
+  unsigned short tp; // объявляем переменную для цикла
   
   skipRom();
   writeByte(CMD_CONVERTTEMP);
   
-  _delay_ms(750);
+  //_delay_ms(750);
+  for(tp=0; tp<25; tp++)
+  {
+	 _delay_ms(30);
+  }
   
   skipRom();
   writeByte(CMD_RSCRATCHPAD);

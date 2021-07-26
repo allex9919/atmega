@@ -1,122 +1,18 @@
 #include "main.h"
 
-#define DHT_PORT PORTC
-#define DHT_DDR DDRC
-#define DHT_PIN PINC
-
-#define DHT_PIN_nomer 4
-
-void setup() {
-// настраиваем порты
-//DDRB = 0x00;
-//PORTB = 0x00;
-DDRC = 0x00;
-PORTC = 0x00;
-//DDRD = 0x00;
-//PORTD = 0x00;
-// включаем I2C шину и экран
-I2C_init();
-//LCD_ini();
-
-}
-
-typedef struct temphumi { // структура данных для DHT11
-uint8_t temp;
-uint8_t humi;
-} temphumi_t;
-
-int DHT_read(uint8_t _PIN, temphumi_t* _DATA) {
-
-	// обнуляем переменную
-	uint8_t DHT_RESPONSE[5] = {0, 0, 0, 0, 0};
-
-	// формируем задержки для старта датчика
-
-	DHT_DDR |= (1 << _PIN);
-	DHT_PORT &= ~(1 << _PIN);
-
-	_delay_ms(18);
-
-	DHT_PORT |= (1 << _PIN);
-	DHT_DDR &= ~(1 << _PIN);
-
-	_delay_us(40);
-
-	//смотрим, что пришло через 54us и 80us
-
-	if(DHT_PIN & (1 << _PIN)) {
-	return 0;
-	}
-
-	_delay_us(54);
-
-	if(!DHT_PIN & (1 << _PIN)) {
-	return 0;
-	}
-
-	_delay_us(80);
-
-	//если датчик готов с нами работать - читаем 5 байт
-
-	uint8_t _bit, _byte;
-
-	while (DHT_PIN & (1 << _PIN));
-
-	for (_byte = 0; _byte < 5; _byte++) {
-
-	DHT_RESPONSE[_byte] = 0;
-
-	for (_bit = 0; _bit < 8; _bit++) {
-
-	while (!(DHT_PIN & (1 << _PIN))); // ждем ....
-
-	_delay_us(30);
-
-	if (DHT_PIN & (1 << _PIN)) { // если пришла 1, записываем ее в нужное место
-	DHT_RESPONSE[_byte] |= 1 << (7 - _bit);
-	}
-
-	while (DHT_PIN & (1 << _PIN)); // ждем окончания сигнала
-	}
-	}
-
-	// если пришли все  0 - ошибка приема данных
-	if (DHT_RESPONSE[0] + DHT_RESPONSE[1] + DHT_RESPONSE[2] + DHT_RESPONSE[3] == 0) { return 0; }
-
-	// проверяем данные на ликвидность
-	if (DHT_RESPONSE[0] + DHT_RESPONSE[1] + DHT_RESPONSE[2] + DHT_RESPONSE[3] != DHT_RESPONSE[4]) { return 0; }
-
-	// если проверка на ликвидность прошла - читаем данные.
-	_DATA -> humi = DHT_RESPONSE[0]; // влажность
-	_DATA -> temp = DHT_RESPONSE[2];// температура
-
-	return 1;
-}
-
-//—————————————-
+//—————————————
 
 int main (void)
 {	
-//--------------------------------------------------------------------------
-	char buff1[3]; // переменная для хранения данных которые выводим на экран
-	char buff2[3]; // переменная для хранения данных которые выводим на экран
-	temphumi_t DHT_DATA = {0 ,0}; //переменная для хранения данных которые считываем с датчика
-	setup();
-//--------------------------------------------------------------------------
-	//oneWireInit(PINB2);
-	//double temperature;
 //--------------------------------------------------------------------------
 	DDRD |= (1 << PD3)|(1 << PD2)|(1 << PD1)|(1 << PD0); // Порт вывода
 	DDRD &= ~(1 << PD7)|(1 << PD6)|(1 << PD5)|(1 << PD4); // Порт ввода
 	PORTD = 0xF0; // Устанавливаем лог. 1 в порт ввода
 	_delay_ms(10);
 //--------------------------------------------------------------------------	
-	DDRB |= (1<<1);    //инициализируем как вход
-	//DDRB |= (1<<2);    //инициализируем как вход
-	DDRB |= (1<<3);    //инициализируем как вход
-	DDRB |= (1<<4);    //инициализируем как вход
-	DDRB |= (1<<5);    //инициализируем как вход
-	DDRB |= (1<<6);    //инициализируем как вход
+	DDRB |=(1<<4);    //инициализируем как вход
+	DDRB |=(1<<5);    //инициализируем как вход
+	DDRB |=(1<<6);    //инициализируем как вход
 //--------------------------------------------------------------------------		
 	/*uint32_t mem = 11111;
 	uint32_t adr = 0;
@@ -148,12 +44,13 @@ int main (void)
 	unsigned int cc = 0;
 	char Num[4] = "";
 	int cycle = 0;
-	int cycle2 = 0;
+	int cycle2 = 0; 
+	char text[17] = "T=";
 //--------------------------------------------------------------------------	
 ////////////////////////////////////////////////////////////////////////////		
 //--------------------------------------------------------------------------	
 	while(1) 
-	{	
+	{		
 		if (PINB & (1<<PB5)) 
 		{
 			while(PINB & (1<<PB5))
@@ -182,26 +79,34 @@ int main (void)
 			if (cycle2 == 0)
 			{
 				cycle2 = 1;
-////////////////////////////////////////////////////////////////////////////		
-				if (DHT_read(DHT_PIN_nomer, &DHT_DATA) == 1) 
-				{
-					// если данные пришли
-					sprintf(buff1, "%d", DHT_DATA.temp);
-					//setpos(5, 0);
-					//str_lcd(buff);// выводим температуру
-
-					sprintf(buff2, "%d", DHT_DATA.humi);
-					//setpos(5, 2);
-					//str_lcd(buff);// выводим влажность
-				}
-				_delay_ms(30);
-////////////////////////////////////////////////////////////////////////////				
 				lcdInit();
 				_delay_ms(10);
 				lcdSetCursor(LCD_CURSOR_OFF);
 				_delay_ms(10);
 				lcdSetDisplay(LCD_DISPLAY_ON);
 				_delay_ms(10);
+////////////////////////////////////////////////////////////////////////////					
+				oneWireInit(PINB2);
+
+				double temperature;
+
+				temperature = getTemp();
+				//printTemp(temperature);
+				//char text[17] = "T = ";
+				int fs[2];
+				char num[5];
+
+				explodeDoubleNumber(fs, temperature);
+				if (temperature < 0) {
+				strcat(text, "-");
+				}
+				itoa(fs[0], num, 10);
+				strcat(text, num);
+				strcat(text, ".");
+				itoa(fs[1], num, 10);
+				strcat(text, num);
+				strcat(text, "'C");
+				_delay_ms(30);
 			}
 ////////////////////////////////////////////////////////////////////////////			
 			memset(Result, 0, sizeof Result);//------------------
@@ -234,15 +139,16 @@ int main (void)
 					_delay_ms(30);
 				}
 ////////////////////////////////////////////////////////////////////////////								
-				lcdGotoXY(0,3); 
-				lcdPuts(buff1);
-				lcdGotoXY(0,7); 
-				lcdPuts(buff2);
+				//lcdGotoXY(0, 0);
+				//lcdPuts(txt);
+				lcdGotoXY(0, 0);
+				lcdPuts(text);
+////////////////////////////////////////////////////////////////////////////
 				lcdGotoXY(1,0); 
 				lcdPuts("Code:"); 
 				Result_Copy = atol(Result);
 				lcdGotoXY(1,6); 
-				lcdPuts(Result);	
+				lcdPuts(Result); 
 				// Выводим значение нажатой кнопки на индикатор
 				for (j=0; j<5; j++)
 				{
