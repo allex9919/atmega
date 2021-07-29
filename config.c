@@ -8,42 +8,25 @@ inline void explodeDoubleNumber(int* numbers, double flt) {
   numbers[1] = abs((int) ((flt - ((int) flt)) * 10));
 }
 
-inline void printTemp(double d) {
-  char text[17] = "T = ";
-  int fs[2];
-  char num[5];
-  
-  explodeDoubleNumber(fs, d);
-  if (d < 0) {
-    strcat(text, "-");
-  }
-  itoa(fs[0], num, 10);
-  strcat(text, num);
-  strcat(text, ".");
-  itoa(fs[1], num, 10);
-  strcat(text, num);
-  strcat(text, "'C");
-  lcdClear();
-  lcdGotoXY(0, 0);
-  lcdPuts(text);
-}
-
-double getTemp(void) {
+double getTemp(uint64_t ds18b20s) {
   uint8_t temperatureL;
   uint8_t temperatureH;
   double retd = 0;
+  
   unsigned short tp; // объявляем переменную для цикла
   
-  skipRom();
+  //skipRom();
+  setDevice(ds18b20s);
   writeByte(CMD_CONVERTTEMP);
   
-  //_delay_ms(750);
-  for(tp=0; tp<25; tp++)
+  _delay_ms(750);
+  /*for(tp=0; tp<25; tp++)
   {
 	 _delay_ms(30);
-  }
+  }*/
   
-  skipRom();
+  //skipRom();
+  setDevice(ds18b20s);
   writeByte(CMD_RSCRATCHPAD);
   
   temperatureL = readByte();

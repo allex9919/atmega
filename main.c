@@ -4,11 +4,6 @@
 
 int main (void)
 {	
-//--------------------------------------------------------------------------
-	DDRD |= (1 << PD3)|(1 << PD2)|(1 << PD1)|(1 << PD0); // Порт вывода
-	DDRD &= ~(1 << PD7)|(1 << PD6)|(1 << PD5)|(1 << PD4); // Порт ввода
-	PORTD = 0xF0; // Устанавливаем лог. 1 в порт ввода
-	_delay_ms(10);
 //--------------------------------------------------------------------------	
 	DDRB |=(1<<4);    //инициализируем как вход
 	DDRB |=(1<<5);    //инициализируем как вход
@@ -45,26 +40,30 @@ int main (void)
 	char Num[4] = "";
 	int cycle = 0;
 	int cycle2 = 0; 
-	char text[17] = "T=";
+	char text[17] = "";
+	uint8_t ti = 0;
+	char txt[17] = "";
 //--------------------------------------------------------------------------	
 ////////////////////////////////////////////////////////////////////////////		
 //--------------------------------------------------------------------------	
 	while(1) 
 	{		
-		if (PINB & (1<<PB5)) 
+		if (PINB & (1<<PB3)) 
 		{
-			while(PINB & (1<<PB5))
+			while(PINB & (1<<PB3))
 			{
-				if ((PINB & (1<<PB5)) == 0) 
+				if ((PINB & (1<<PB3)) == 0) 
 				{
 					break;
 				}	
 			}	
 			for(j=0; j<=66; j++)
 			{
+				PORTB |=(1<<3);    //высокий уровень 
 				PORTB |=(1<<5);    //высокий уровень 
 				_delay_ms(30);
 			}
+			PORTB &= ~(1<<3);    //низкий уровень
 			PORTB &= ~(1<<5);    //низкий уровень
 		}
 ////////////////////////////////////////////////////////////////////////////	
@@ -85,28 +84,52 @@ int main (void)
 				_delay_ms(10);
 				lcdSetDisplay(LCD_DISPLAY_ON);
 				_delay_ms(10);
+////////////////////////////////////////////////////////////////////////////				
+				lcdGotoXY(0, 5);
+				lcdPuts("Hello!");
+				lcdGotoXY(1, 4);
+				lcdPuts("/(^ - ^)/");
 ////////////////////////////////////////////////////////////////////////////					
 				oneWireInit(PINB2);
-
 				double temperature;
-
-				temperature = getTemp();
-				//printTemp(temperature);
-				//char text[17] = "T = ";
-				int fs[2];
-				char num[5];
-
-				explodeDoubleNumber(fs, temperature);
-				if (temperature < 0) {
-				strcat(text, "-");
+				uint8_t tn = 8;
+				uint64_t roms[tn];
+				searchRom(roms, &tn);
+				_delay_ms(100);
+				//strcat(txt, "Detect ");
+				//char num[5];
+				//itoa(tn, num, 10);
+				//strcat(txt, num);
+				//strcat(txt, " devices");
+////////////////////////////////////////////////////////////////////////////				
+				//lcdGotoXY(1, 0);
+				//lcdPuts(txt);
+////////////////////////////////////////////////////////////////////////////
+				//_delay_ms(500);
+				for (ti = 0; ti < tn; ti++)
+				{
+					temperature = getTemp(roms[ti]);
+					int fs[2];
+					char num2[5];
+					//char tii = ti + 1;
+					itoa(ti, num2, 10);
+					//strcat(text, "T");
+					//strcat(text, num2);
+					//strcat(text, "=");
+					explodeDoubleNumber(fs, temperature);
+					if (temperature < 0) 
+					{
+						strcat(text, "-");
+					}
+					itoa(fs[0], num2, 10);
+					strcat(text, num2);
+					strcat(text, ".");
+					itoa(fs[1], num2, 10);
+					strcat(text, num2);
+					strcat(text, "'C ");
+					//_delay_ms(30);
+					_delay_ms(50);
 				}
-				itoa(fs[0], num, 10);
-				strcat(text, num);
-				strcat(text, ".");
-				itoa(fs[1], num, 10);
-				strcat(text, num);
-				strcat(text, "'C");
-				_delay_ms(30);
 			}
 ////////////////////////////////////////////////////////////////////////////			
 			memset(Result, 0, sizeof Result);//------------------
@@ -114,13 +137,13 @@ int main (void)
 			lcdClear();
 			_delay_ms(30);
 ////////////////////////////////////////////////////////////////////////////		
-			for(m=0; m<18000; m++)
+			for(m=0; m<12000; m++)
 			{ 
-				if (PINB & (1<<PB5)) 
+				if (PINB & (1<<PB3)) 
 				{
-					while(PINB & (1<<PB5))
+					while(PINB & (1<<PB3))
 					{
-						if ((PINB & (1<<PB5)) == 0) 
+						if ((PINB & (1<<PB3)) == 0) 
 						{
 							break;
 						}	
@@ -131,9 +154,11 @@ int main (void)
 					{
 						lcdGotoXY(1,4); 
 						lcdPuts("Unlocked"); 
+						PORTB |=(1<<3);    //высокий уровень 
 						PORTB |=(1<<5);    //высокий уровень 
 						_delay_ms(30);
 					}
+					PORTB &= ~(1<<3);    //низкий уровень
 					PORTB &= ~(1<<5);    //низкий уровень
 					lcdClear();
 					_delay_ms(30);
@@ -188,11 +213,12 @@ int main (void)
 									lcdGotoXY(1,4); 
 									lcdPuts("Unlocked"); 
 									//Включаем порт реле
-									//PORTB |=(1<<4);    //высокий уровень
+									PORTB |=(1<<3);    //высокий уровень
 									//зеленый светодиод
 									PORTB |=(1<<5);    //высокий уровень 
 									_delay_ms(30);
 								}
+								PORTB &= ~(1<<3);    //низкий уровень
 								PORTB &= ~(1<<5);    //низкий уровень
 								break;
 							}
@@ -268,10 +294,10 @@ int main (void)
 															lcdGotoXY(1,5);
 															lcdPuts("Added");
 															//зеленый светодиод
-															//PORTB |=(1<<5);    //высокий уровень
+															PORTB |=(1<<5);    //высокий уровень
 															_delay_ms(30);
 														}
-														//PORTB = 0x00;
+														PORTB &= ~(1<<5);    //низкий уровень
 														break;
 													}
 												}
@@ -380,10 +406,10 @@ int main (void)
 															lcdGotoXY(1,4);
 															lcdPuts("Deleted");
 															//зеленый светодиод
-															//PORTB |=(1<<5);    //высокий уровень
+															PORTB |=(1<<5);    //высокий уровень
 															_delay_ms(30);
 														}
-														//PORTB = 0x00;
+														PORTB &= ~(1<<5);    //низкий уровень
 														break;
 													}
 												}
@@ -507,12 +533,10 @@ int main (void)
 										lcdPuts(Num);
 										lcdGotoXY(0,11);
 										lcdPuts("codes");
-										//PORTB |=(1<<5);    //высокий уровень 
-										//_delay_ms(100);
-										//PORTB = 0x00;
-										//_delay_ms(10);
+										PORTB |=(1<<5);    //высокий уровень 
 										_delay_ms(30);
 									}
+									PORTB &= ~(1<<5);    //низкий уровень
 									i = 0;
 									lcdClear();
 									_delay_ms(30);
@@ -567,10 +591,10 @@ int main (void)
 														lcdGotoXY(1,5);
 														lcdPuts("Changed");
 														//зеленый светодиод
-														//PORTB |=(1<<5);    //высокий уровень
+														PORTB |=(1<<5);    //высокий уровень
 														_delay_ms(30);
 													}
-													//PORTB = 0x00;
+													PORTB &= ~(1<<5);    //низкий уровень
 													i = 0;
 													break;
 												}

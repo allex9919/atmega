@@ -8,7 +8,6 @@
 #define ONE_WIRE_PIN       PINB
 
 void explodeDoubleNumber(int* numbers, double flt);
-inline void printTemp(double d);
-double getTemp(void);
+double getTemp(uint64_t ds18b20s);
 
 #endif /* CONFIG_H_ */
