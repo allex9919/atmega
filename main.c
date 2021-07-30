@@ -5,6 +5,13 @@
 int main (void)
 {	
 //--------------------------------------------------------------------------	
+	DDRD |= (1 << PD3)|(1 << PD2)|(1 << PD1)|(1 << PD0); // Порт вывода
+	DDRD &= ~(1 << PD7)|(1 << PD6)|(1 << PD5)|(1 << PD4); // Порт ввода
+	PORTD = 0xf0; // Устанавливаем лог. 1 в порт ввода
+	_delay_us(10);
+//--------------------------------------------------------------------------	
+	DDRB |=(1<<1);    //инициализируем как вход
+	DDRB |=(1<<3);    //инициализируем как вход
 	DDRB |=(1<<4);    //инициализируем как вход
 	DDRB |=(1<<5);    //инициализируем как вход
 	DDRB |=(1<<6);    //инициализируем как вход
@@ -40,9 +47,9 @@ int main (void)
 	char Num[4] = "";
 	int cycle = 0;
 	int cycle2 = 0; 
-	char text[17] = "";
+	char text[16] = "";
 	uint8_t ti = 0;
-	char txt[17] = "";
+	char txt[16] = "";
 //--------------------------------------------------------------------------	
 ////////////////////////////////////////////////////////////////////////////		
 //--------------------------------------------------------------------------	
@@ -87,8 +94,8 @@ int main (void)
 ////////////////////////////////////////////////////////////////////////////				
 				lcdGotoXY(0, 5);
 				lcdPuts("Hello!");
-				lcdGotoXY(1, 4);
-				lcdPuts("/(^ - ^)/");
+				lcdGotoXY(1, 3);
+				lcdPuts("/(^ -- ^)/");
 ////////////////////////////////////////////////////////////////////////////					
 				oneWireInit(PINB2);
 				double temperature;
@@ -106,7 +113,7 @@ int main (void)
 				//lcdPuts(txt);
 ////////////////////////////////////////////////////////////////////////////
 				//_delay_ms(500);
-				for (ti = 0; ti < tn; ti++)
+				for (ti = 0; ti < 2; ti++)
 				{
 					temperature = getTemp(roms[ti]);
 					int fs[2];
@@ -137,7 +144,7 @@ int main (void)
 			lcdClear();
 			_delay_ms(30);
 ////////////////////////////////////////////////////////////////////////////		
-			for(m=0; m<12000; m++)
+			for(m=0; m<4000; m++)
 			{ 
 				if (PINB & (1<<PB3)) 
 				{
@@ -179,16 +186,16 @@ int main (void)
 				{
 					if (Result[j]==0)
 					{
-						if(scan_key()==11) {Result[j]='0'; f++;}
-						else if(scan_key()==1) {Result[j]='1'; f++;}
-						else if(scan_key()==2) {Result[j]='2'; f++;}
-						else if(scan_key()==3) {Result[j]='3'; f++;}
-						else if(scan_key()==4) {Result[j]='4'; f++;}
-						else if(scan_key()==5) {Result[j]='5'; f++;}
-						else if(scan_key()==6) {Result[j]='6'; f++;}
-						else if(scan_key()==7) {Result[j]='7'; f++;}
-						else if(scan_key()==8) {Result[j]='8'; f++;}
-						else if(scan_key()==9) {Result[j]='9'; f++;}
+						if(scan_key()==11) {while(scan_key()==11); Result[j]='0'; f++;}
+						else if(scan_key()==1) {while(scan_key()==1); Result[j]='1'; f++;}
+						else if(scan_key()==2) {while(scan_key()==2); Result[j]='2'; f++;}
+						else if(scan_key()==3) {while(scan_key()==3); Result[j]='3'; f++;}
+						else if(scan_key()==4) {while(scan_key()==4); Result[j]='4'; f++;}
+						else if(scan_key()==5) {while(scan_key()==5); Result[j]='5'; f++;}
+						else if(scan_key()==6) {while(scan_key()==6); Result[j]='6'; f++;}
+						else if(scan_key()==7) {while(scan_key()==7); Result[j]='7'; f++;}
+						else if(scan_key()==8) {while(scan_key()==8); Result[j]='8'; f++;}
+						else if(scan_key()==9) {while(scan_key()==9); Result[j]='9'; f++;}
 						//_delay_ms(30);
 						break;
 					}
@@ -196,6 +203,7 @@ int main (void)
 ////////////////////////////////////////////////////////////////////////////			
 				if(scan_key()==10)  
 				{
+					while(scan_key()==10);
 					cycle--;
 					//_delay_ms(30);
 					if(Result[4]!=0) 
@@ -244,6 +252,7 @@ int main (void)
 ////////////////////////////////////////////////////////////////////////////						
 								if (scan_key()==10) 
 								{
+									while(scan_key()==10);
 									lcdClear();
 									_delay_ms(30);
 									for(ii=0; ii<=6000; ii++)
@@ -258,16 +267,16 @@ int main (void)
 										{
 											if (Code[j]==0)
 											{
-												if(scan_key()==11) {Code[j]='0'; ff++;}
-												else if(scan_key()==1) {Code[j]='1'; ff++;}
-												else if(scan_key()==2) {Code[j]='2'; ff++;}
-												else if(scan_key()==3) {Code[j]='3'; ff++;}
-												else if(scan_key()==4) {Code[j]='4'; ff++;}
-												else if(scan_key()==5) {Code[j]='5'; ff++;}
-												else if(scan_key()==6) {Code[j]='6'; ff++;}
-												else if(scan_key()==7) {Code[j]='7'; ff++;}
-												else if(scan_key()==8) {Code[j]='8'; ff++;}
-												else if(scan_key()==9) {Code[j]='9'; ff++;}
+												if(scan_key()==11) {while(scan_key()==11); Code[j]='0'; ff++;}
+												else if(scan_key()==1) {while(scan_key()==1); Code[j]='1'; ff++;}
+												else if(scan_key()==2) {while(scan_key()==2); Code[j]='2'; ff++;}
+												else if(scan_key()==3) {while(scan_key()==3); Code[j]='3'; ff++;}
+												else if(scan_key()==4) {while(scan_key()==4); Code[j]='4'; ff++;}
+												else if(scan_key()==5) {while(scan_key()==5); Code[j]='5'; ff++;}
+												else if(scan_key()==6) {while(scan_key()==6); Code[j]='6'; ff++;}
+												else if(scan_key()==7) {while(scan_key()==7); Code[j]='7'; ff++;}
+												else if(scan_key()==8) {while(scan_key()==8); Code[j]='8'; ff++;}
+												else if(scan_key()==9) {while(scan_key()==9); Code[j]='9'; ff++;}
 												//_delay_ms(30);
 												break;
 											}
@@ -275,6 +284,7 @@ int main (void)
 //--------------------------------------------------------------------------								
 										if (scan_key()==10) 
 										{
+											while(scan_key()==10);
 											//_delay_ms(30);
 											if(Code[4]!=0) 
 											{
@@ -325,6 +335,7 @@ int main (void)
 //--------------------------------------------------------------------------								
 										if(scan_key()==12)
 										{
+											while(scan_key()==12);
 											//_delay_ms(30);
 											Code[ff] = 0;
 											ff--;
@@ -346,6 +357,7 @@ int main (void)
 ////////////////////////////////////////////////////////////////////////////						
 								if (scan_key()==12) 
 								{
+									while(scan_key()==12);
 									//_delay_ms(30);
 									lcdClear();
 									_delay_ms(30);
@@ -361,16 +373,16 @@ int main (void)
 										{
 											if (Code[j]==0)
 											{
-												if(scan_key()==11) {Code[j]='0'; ff++;}
-												else if(scan_key()==1) {Code[j]='1'; ff++;}
-												else if(scan_key()==2) {Code[j]='2'; ff++;}
-												else if(scan_key()==3) {Code[j]='3'; ff++;}
-												else if(scan_key()==4) {Code[j]='4'; ff++;}
-												else if(scan_key()==5) {Code[j]='5'; ff++;}
-												else if(scan_key()==6) {Code[j]='6'; ff++;}
-												else if(scan_key()==7) {Code[j]='7'; ff++;}
-												else if(scan_key()==8) {Code[j]='8'; ff++;}
-												else if(scan_key()==9) {Code[j]='9'; ff++;}
+												if(scan_key()==11) {while(scan_key()==11); Code[j]='0'; ff++;}
+												else if(scan_key()==1) {while(scan_key()==1); Code[j]='1'; ff++;}
+												else if(scan_key()==2) {while(scan_key()==2); Code[j]='2'; ff++;}
+												else if(scan_key()==3) {while(scan_key()==3); Code[j]='3'; ff++;}
+												else if(scan_key()==4) {while(scan_key()==4); Code[j]='4'; ff++;}
+												else if(scan_key()==5) {while(scan_key()==5); Code[j]='5'; ff++;}
+												else if(scan_key()==6) {while(scan_key()==6); Code[j]='6'; ff++;}
+												else if(scan_key()==7) {while(scan_key()==7); Code[j]='7'; ff++;}
+												else if(scan_key()==8) {while(scan_key()==8); Code[j]='8'; ff++;}
+												else if(scan_key()==9) {while(scan_key()==9); Code[j]='9'; ff++;}
 												//_delay_ms(30);
 												break;
 											}
@@ -378,6 +390,7 @@ int main (void)
 //--------------------------------------------------------------------------								
 										if (scan_key()==10) 
 										{
+											while(scan_key()==10);
 											//_delay_ms(30);
 											if(Code[4]!=0) 
 											{
@@ -437,6 +450,7 @@ int main (void)
 //--------------------------------------------------------------------------								
 										if(scan_key()==12)
 										{
+											while(scan_key()==12);
 											//_delay_ms(30);
 											Code[ff] = 0;
 											ff--;
@@ -458,6 +472,7 @@ int main (void)
 ////////////////////////////////////////////////////////////////////////////						
 								if (scan_key()==11) 
 								{
+									while(scan_key()==11);
 									//_delay_ms(30);
 									for(n=4; n<129; n+=4)
 									{
@@ -496,10 +511,12 @@ int main (void)
 													lcdPuts(Code);
 													if(scan_key()==10)
 													{
+														while(scan_key()==10);
 														break;
 													}
 													if(scan_key()==12)
 													{
+														while(scan_key()==12);
 														//_delay_ms(30);
 														cc = 1;
 														lcdClear();
@@ -544,6 +561,7 @@ int main (void)
 ////////////////////////////////////////////////////////////////////////////						
 								if (scan_key()==1) 
 								{
+									while(scan_key()==1);
 									//_delay_ms(30);
 									lcdClear();
 									_delay_ms(30);
@@ -559,16 +577,16 @@ int main (void)
 										{
 											if (Code[j]==0)
 											{
-												if(scan_key()==11) {Code[j]='0'; ff++;}
-												else if(scan_key()==1) {Code[j]='1'; ff++;}
-												else if(scan_key()==2) {Code[j]='2'; ff++;}
-												else if(scan_key()==3) {Code[j]='3'; ff++;}
-												else if(scan_key()==4) {Code[j]='4'; ff++;}
-												else if(scan_key()==5) {Code[j]='5'; ff++;}
-												else if(scan_key()==6) {Code[j]='6'; ff++;}
-												else if(scan_key()==7) {Code[j]='7'; ff++;}
-												else if(scan_key()==8) {Code[j]='8'; ff++;}
-												else if(scan_key()==9) {Code[j]='9'; ff++;}
+												if(scan_key()==11) {while(scan_key()==11); Code[j]='0'; ff++;}
+												else if(scan_key()==1) {while(scan_key()==1); Code[j]='1'; ff++;}
+												else if(scan_key()==2) {while(scan_key()==2); Code[j]='2'; ff++;}
+												else if(scan_key()==3) {while(scan_key()==3); Code[j]='3'; ff++;}
+												else if(scan_key()==4) {while(scan_key()==4); Code[j]='4'; ff++;}
+												else if(scan_key()==5) {while(scan_key()==5); Code[j]='5'; ff++;}
+												else if(scan_key()==6) {while(scan_key()==6); Code[j]='6'; ff++;}
+												else if(scan_key()==7) {while(scan_key()==7); Code[j]='7'; ff++;}
+												else if(scan_key()==8) {while(scan_key()==8); Code[j]='8'; ff++;}
+												else if(scan_key()==9) {while(scan_key()==9); Code[j]='9'; ff++;}
 												//_delay_ms(30);
 												break;
 											}
@@ -576,6 +594,7 @@ int main (void)
 //--------------------------------------------------------------------------								
 										if (scan_key()==10) 
 										{
+											while(scan_key()==10);
 											//_delay_ms(30);
 											if(Code[4]!=0) 
 											{
@@ -620,6 +639,7 @@ int main (void)
 //--------------------------------------------------------------------------								
 										if(scan_key()==12)
 										{
+											while(scan_key()==12);
 											//_delay_ms(30);
 											Code[ff] = 0;
 											ff--;
@@ -668,6 +688,7 @@ int main (void)
 ////////////////////////////////////////////////////////////////////////////			
 				if(scan_key()==12)
 				{
+					while(scan_key()==12);
 					//_delay_ms(30);
 					Result[f] = 0;
 					f--;
