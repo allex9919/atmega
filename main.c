@@ -16,15 +16,44 @@ int main (void)
 	DDRB |=(1<<5);    //инициализируем как вход
 	DDRB |=(1<<6);    //инициализируем как вход
 //--------------------------------------------------------------------------		
-	/*uint32_t mem = 11111;
-	uint32_t adr = 0;
+	/*uint32_t mem1 = 0;
+	uint32_t adr1 = 0;
 	eeprom_busy_wait();
-	eeprom_write_dword(adr, mem);*/
+	eeprom_write_dword(adr1, mem1);
 //--------------------------------------------------------------------------	
-	/*uint32_t mem2 = 22222;
+	uint32_t mem2 = 0;
 	uint32_t adr2 = 4;
 	eeprom_busy_wait();
-	eeprom_write_dword(adr2, mem2);*/
+	eeprom_write_dword(adr2, mem2);
+//--------------------------------------------------------------------------		
+	uint32_t mem3 = 11111;
+	uint32_t adr3 = 8;
+	eeprom_busy_wait();
+	eeprom_write_dword(adr3, mem3);
+//--------------------------------------------------------------------------	
+	uint32_t mem4 = 22222;
+	uint32_t adr4 = 12;
+	eeprom_busy_wait();
+	eeprom_write_dword(adr4, mem4);*/
+//--------------------------------------------------------------------------	
+	uint32_t all_on = 0;
+	eeprom_busy_wait();
+	all_on = eeprom_read_dword(0);
+	all_on++;
+	if (all_on == 9999)
+	{
+		all_on = 0;
+	}
+	eeprom_busy_wait();
+	eeprom_write_dword(0, all_on);
+//--------------------------------------------------------------------------	
+	uint32_t period_on = 0;
+	eeprom_busy_wait();
+	period_on = eeprom_read_dword(4);
+	if (period_on == 99)
+	{
+		period_on = 0;
+	}
 //--------------------------------------------------------------------------
 	unsigned short m; // объявляем переменную для цикла
 	unsigned short i; // объявляем переменную для цикла
@@ -47,9 +76,12 @@ int main (void)
 	char Num[4] = "";
 	int cycle = 0;
 	int cycle2 = 0; 
-	char text[16] = "";
+	char text1[16] = "";
+	char text2[16] = "";
 	uint8_t ti = 0;
-	char txt[16] = "";
+	//char txt[16] = "";
+	char all_var[4] = "";
+	char period_var[2] = "";
 //--------------------------------------------------------------------------	
 ////////////////////////////////////////////////////////////////////////////		
 //--------------------------------------------------------------------------	
@@ -84,57 +116,113 @@ int main (void)
 			}
 			if (cycle2 == 0)
 			{
+////////////////////////////////////////////////////////////////////////////				
 				cycle2 = 1;
 				lcdInit();
 				_delay_ms(10);
 				lcdSetCursor(LCD_CURSOR_OFF);
 				_delay_ms(10);
 				lcdSetDisplay(LCD_DISPLAY_ON);
-				_delay_ms(10);
+				_delay_ms(10);				
 ////////////////////////////////////////////////////////////////////////////				
-				lcdGotoXY(0, 5);
-				lcdPuts("Hello!");
-				lcdGotoXY(1, 3);
-				lcdPuts("/(^ -- ^)/");
-////////////////////////////////////////////////////////////////////////////					
-				oneWireInit(PINB2);
 				double temperature;
 				uint8_t tn = 8;
-				uint64_t roms[tn];
-				searchRom(roms, &tn);
-				_delay_ms(100);
+				uint64_t roms[tn];				
+////////////////////////////////////////////////////////////////////////////
 				//strcat(txt, "Detect ");
 				//char num[5];
 				//itoa(tn, num, 10);
 				//strcat(txt, num);
-				//strcat(txt, " devices");
-////////////////////////////////////////////////////////////////////////////				
+				//strcat(txt, " devices");				
 				//lcdGotoXY(1, 0);
 				//lcdPuts(txt);
-////////////////////////////////////////////////////////////////////////////
 				//_delay_ms(500);
-				for (ti = 0; ti < 2; ti++)
+////////////////////////////////////////////////////////////////////////////				
+				ultoa(all_on, all_var, 10);
+				for (ti = 0; ti < 3; ti++)
 				{
+					if (scan_key()==10) 
+					{
+						while(scan_key()==10);
+						if (period_on == 0)
+						{
+							period_on = 1;
+						}
+						else
+						{
+							period_on = 0;
+							eeprom_busy_wait();
+							eeprom_write_dword(4, period_on);
+							lcdClear();
+							_delay_ms(10);
+						}
+					}
+					lcdGotoXY(0, 0);
+					lcdPuts("No.");
+					lcdGotoXY(0, 5);
+					lcdPuts("(^-^)");
+					lcdGotoXY(0, 14);
+					lcdPuts("*:");
+					lcdGotoXY(1, 0);
+					lcdPuts(all_var);
+					lcdGotoXY(1, 5);
+					lcdPuts("Hello!");
+					if (period_on != 0)
+					{
+						period_on++;
+						eeprom_busy_wait();
+						eeprom_write_dword(4, period_on);
+						period_on--;
+						ultoa(period_on, period_var, 10);
+						lcdGotoXY(1, 14);
+						lcdPuts(period_var);	
+					}
+////////////////////////////////////////////////////////////////////////////					
+					if (ti == 0)
+					{								
+						oneWireInit(PINB2);
+						searchRom(roms, &tn);
+						_delay_ms(50);
+					}				
+////////////////////////////////////////////////////////////////////////////					
 					temperature = getTemp(roms[ti]);
 					int fs[2];
 					char num2[5];
-					//char tii = ti + 1;
 					itoa(ti, num2, 10);
 					//strcat(text, "T");
 					//strcat(text, num2);
 					//strcat(text, "=");
 					explodeDoubleNumber(fs, temperature);
-					if (temperature < 0) 
+					if (fs[0]==0 && fs[1]==0)
 					{
-						strcat(text, "-");
+						continue;
 					}
-					itoa(fs[0], num2, 10);
-					strcat(text, num2);
-					strcat(text, ".");
-					itoa(fs[1], num2, 10);
-					strcat(text, num2);
-					strcat(text, "'C ");
-					//_delay_ms(30);
+					if (ti < 2)
+					{
+						if (temperature < 0) 
+						{
+							strcat(text1, "-");
+						}
+						itoa(fs[0], num2, 10);
+						strcat(text1, num2);
+						strcat(text1, ".");
+						itoa(fs[1], num2, 10);
+						strcat(text1, num2);
+						strcat(text1, "'C ");
+					}
+					if (ti == 2)
+					{
+						if (temperature < 0) 
+						{
+							strcat(text2, "-");
+						}
+						itoa(fs[0], num2, 10);
+						strcat(text2, num2);
+						strcat(text2, ".");
+						itoa(fs[1], num2, 10);
+						strcat(text2, num2);
+						strcat(text2, "'C ");
+					}
 					_delay_ms(50);
 				}
 			}
@@ -174,13 +262,42 @@ int main (void)
 				//lcdGotoXY(0, 0);
 				//lcdPuts(txt);
 				lcdGotoXY(0, 0);
-				lcdPuts(text);
+				lcdPuts(text1);
+				lcdGotoXY(1, 0);
+				lcdPuts(text2);
 ////////////////////////////////////////////////////////////////////////////
-				lcdGotoXY(1,0); 
-				lcdPuts("Code:"); 
+				lcdGotoXY(1,7); 
+				lcdPuts("["); 
 				Result_Copy = atol(Result);
-				lcdGotoXY(1,6); 
+				lcdGotoXY(1,8); 
 				lcdPuts(Result); 
+				if (f == -1)
+				{
+					lcdGotoXY(1,8); 
+					lcdPuts("....."); 
+				}
+				else if (f == 0)
+				{
+					lcdGotoXY(1,9); 
+					lcdPuts("....");	
+				}
+				else if (f == 1)
+				{
+					lcdGotoXY(1,10); 
+					lcdPuts("...");	
+				}
+				else if (f == 2)
+				{
+					lcdGotoXY(1,11); 
+					lcdPuts("..");	
+				}
+				else if (f == 3)
+				{
+					lcdGotoXY(1,12); 
+					lcdPuts(".");	
+				}
+				lcdGotoXY(1,13); 
+				lcdPuts("]"); 
 				// Выводим значение нажатой кнопки на индикатор
 				for (j=0; j<5; j++)
 				{
@@ -208,7 +325,7 @@ int main (void)
 					//_delay_ms(30);
 					if(Result[4]!=0) 
 					{
-						for (n=4; n<129; n+=4)
+						for (n=12; n<129; n+=4)
 						{
 							eeprom_busy_wait();
 							var = eeprom_read_dword(n);
@@ -232,7 +349,7 @@ int main (void)
 							}
 						}
 //--------------------------------------------------------------------------				
-						n = 0;
+						n = 8;
 						eeprom_busy_wait();
 						var = eeprom_read_dword(n);
 						if (Result_Copy == var)  
@@ -288,7 +405,7 @@ int main (void)
 											//_delay_ms(30);
 											if(Code[4]!=0) 
 											{
-												for(n=4; n<129; n+=4)
+												for(n=12; n<129; n+=4)
 												{
 													nn = n;
 													eeprom_busy_wait();
@@ -394,7 +511,7 @@ int main (void)
 											//_delay_ms(30);
 											if(Code[4]!=0) 
 											{
-												for(n=4; n<129; n+=4)
+												for(n=12; n<129; n+=4)
 												{
 													eeprom_busy_wait();
 													var2 = eeprom_read_dword(n);
@@ -474,7 +591,7 @@ int main (void)
 								{
 									while(scan_key()==11);
 									//_delay_ms(30);
-									for(n=4; n<129; n+=4)
+									for(n=12; n<129; n+=4)
 									{
 										memset(Code, 0, sizeof Code);//-------------
 										memset(Num, 0, sizeof Num);//--------------
@@ -600,7 +717,7 @@ int main (void)
 											{
 												if (Code[0] != 0)
 												{
-													n = 0;
+													n = 8;
 													eeprom_busy_wait();
 													eeprom_write_dword(n, Code_Copy);
 													lcdClear();
