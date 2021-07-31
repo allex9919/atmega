@@ -26,12 +26,12 @@ int main (void)
 	eeprom_busy_wait();
 	eeprom_write_dword(adr2, mem2);
 //--------------------------------------------------------------------------		
-	uint32_t mem3 = 11111;
+	uint32_t mem3 = 1111;
 	uint32_t adr3 = 8;
 	eeprom_busy_wait();
 	eeprom_write_dword(adr3, mem3);
 //--------------------------------------------------------------------------	
-	uint32_t mem4 = 22222;
+	uint32_t mem4 = 2222;
 	uint32_t adr4 = 12;
 	eeprom_busy_wait();
 	eeprom_write_dword(adr4, mem4);*/
@@ -47,14 +47,15 @@ int main (void)
 	eeprom_busy_wait();
 	eeprom_write_dword(0, all_on);
 //--------------------------------------------------------------------------	
-	uint32_t period_on = 0;
+	/*uint32_t period_on = 0;
 	eeprom_busy_wait();
 	period_on = eeprom_read_dword(4);
 	if (period_on == 99)
 	{
 		period_on = 0;
-	}
+	}*/
 //--------------------------------------------------------------------------
+	int z = 3; //Выбираем разрядность кода
 	unsigned short m; // объявляем переменную для цикла
 	unsigned short i; // объявляем переменную для цикла
 	unsigned short ii; // объявляем переменную для цикла
@@ -78,10 +79,13 @@ int main (void)
 	int cycle2 = 0; 
 	char text1[16] = "";
 	char text2[16] = "";
+	//char text3[16] = "";
 	uint8_t ti = 0;
 	//char txt[16] = "";
 	char all_var[4] = "";
-	char period_var[2] = "";
+	//char period_var[2] = "";
+	//unsigned short an; 
+	//unsigned short anim; 
 //--------------------------------------------------------------------------	
 ////////////////////////////////////////////////////////////////////////////		
 //--------------------------------------------------------------------------	
@@ -110,10 +114,10 @@ int main (void)
 		{
 			//Включаем порт реле
 			PORTB |=(1<<4);    //высокий уровень
-			for(j=0; j<=33; j++)
-			{
-				_delay_ms(30);
-			}
+			//for(j=0; j<=33; j++)
+			//{
+				_delay_ms(100);
+			//}
 			if (cycle2 == 0)
 			{
 ////////////////////////////////////////////////////////////////////////////				
@@ -127,7 +131,10 @@ int main (void)
 ////////////////////////////////////////////////////////////////////////////				
 				double temperature;
 				uint8_t tn = 8;
-				uint64_t roms[tn];				
+				uint64_t roms[tn];
+				oneWireInit(PINB2);
+				searchRom(roms, &tn);
+				_delay_ms(30);				
 ////////////////////////////////////////////////////////////////////////////
 				//strcat(txt, "Detect ");
 				//char num[5];
@@ -141,10 +148,209 @@ int main (void)
 				ultoa(all_on, all_var, 10);
 				for (ti = 0; ti < 3; ti++)
 				{
-					if (scan_key()==10) 
+					if (ti == 0)
+					{
+						lcdGotoXY(1, 6);
+						lcdPuts("/(^-^)/");
+					}
+					else if (ti == 1)
+					{
+						lcdGotoXY(1, 6);
+						lcdPuts("-(^-^)-");
+					}
+					else if (ti == 2)
+					{
+						lcdGotoXY(1, 6);
+						lcdPuts("/(^-^)/");
+					}
+					/*if (scan_key()==10) 
 					{
 						while(scan_key()==10);
-						if (period_on == 0)
+////////////////////////////////////////////////////////////////////////////						
+						lcdClear();
+						_delay_ms(10);
+						for (anim = 0; anim < 3; anim++)
+						{
+							for (an = 0; an < 24; an++)
+							{
+								if (an == 0)
+								{
+									lcdGotoXY(0, 0);
+									lcdPuts("");
+									lcdGotoXY(1, 0);
+									lcdPuts("________________");
+								}
+								else if (an == 1)
+								{
+									lcdGotoXY(0, 0);
+									lcdPuts("");
+									lcdGotoXY(1, 0);
+									lcdPuts(")_______________");
+								}
+								else if (an == 2)
+								{
+									lcdGotoXY(0, 0);
+									lcdPuts("_");
+									lcdGotoXY(1, 0);
+									lcdPuts("_)______________");
+								}
+								else if (an == 3)
+								{
+									lcdGotoXY(0, 0);
+									lcdPuts("__");
+									lcdGotoXY(1, 0);
+									lcdPuts("0_)_____________");
+								}
+								else if (an == 4)
+								{
+									lcdGotoXY(0, 0);
+									lcdPuts("/__");
+									lcdGotoXY(1, 0);
+									lcdPuts("_0_)____________");
+								}
+								else if (an == 5)
+								{
+									lcdGotoXY(0, 0);
+									lcdPuts("_/__");
+									lcdGotoXY(1, 0);
+									lcdPuts("0_0_)___________");
+								}
+								else if (an == 6)
+								{
+									lcdGotoXY(0, 0);
+									lcdPuts("__/__");
+									lcdGotoXY(1, 0);
+									lcdPuts("_0_0_)__________");
+								}
+								else if (an == 7)
+								{
+									lcdGotoXY(0, 0);
+									lcdPuts(" __/__");
+									lcdGotoXY(1, 0);
+									lcdPuts("|_0_0_)_________");
+								}
+								else if (an == 8)
+								{
+									lcdGotoXY(0, 0);
+									lcdPuts("  __/__");
+									lcdGotoXY(1, 0);
+									lcdPuts("_|_0_0_)________");
+								}
+								else if (an == 9)
+								{
+									lcdGotoXY(0, 0);
+									lcdPuts("   __/__");
+									lcdGotoXY(1, 0);
+									lcdPuts("__|_0_0_)_______");
+								}
+								else if (an == 10)
+								{
+									lcdGotoXY(0, 0);
+									lcdPuts("    __/__");
+									lcdGotoXY(1, 0);
+									lcdPuts("___|_0_0_)______");
+								}
+								else if (an == 11)
+								{
+									lcdGotoXY(0, 0);
+									lcdPuts("     __/__");
+									lcdGotoXY(1, 0);
+									lcdPuts("____|_0_0_)_____");
+								}
+								else if (an == 12)
+								{
+									lcdGotoXY(0, 0);
+									lcdPuts("      __/__");
+									lcdGotoXY(1, 0);
+									lcdPuts("_____|_0_0_)____");
+								}
+								else if (an == 13)
+								{
+									lcdGotoXY(0, 0);
+									lcdPuts("       __/__");
+									lcdGotoXY(1, 0);
+									lcdPuts("______|_0_0_)___");
+								}
+								else if (an == 14)
+								{
+									lcdGotoXY(0, 0);
+									lcdPuts("        __/__");
+									lcdGotoXY(1, 0);
+									lcdPuts("_______|_0_0_)__");
+								}
+								else if (an == 15)
+								{
+									lcdGotoXY(0, 0);
+									lcdPuts("         __/__");
+									lcdGotoXY(1, 0);
+									lcdPuts("________|_0_0_)_");
+								}
+								else if (an == 16)
+								{
+									lcdGotoXY(0, 0);
+									lcdPuts("          __/__");
+									lcdGotoXY(1, 0);
+									lcdPuts("_________|_0_0_)");
+								}
+								else if (an == 17)
+								{
+									lcdGotoXY(0, 0);
+									lcdPuts("           __/__");
+									lcdGotoXY(1, 0);
+									lcdPuts("__________|_0_0_");
+								}
+								else if (an == 18)
+								{
+									lcdGotoXY(0, 0);
+									lcdPuts("            __/_");
+									lcdGotoXY(1, 0);
+									lcdPuts("___________|_0_0");
+								}
+								else if (an == 19)
+								{
+									lcdGotoXY(0, 0);
+									lcdPuts("             __/");
+									lcdGotoXY(1, 0);
+									lcdPuts("____________|_0_");
+								}
+								else if (an == 20)
+								{
+									lcdGotoXY(0, 0);
+									lcdPuts("             __");
+									lcdGotoXY(1, 0);
+									lcdPuts("____________|_0");
+								}
+								else if (an == 21)
+								{
+									lcdGotoXY(0, 0);
+									lcdPuts("              _");
+									lcdGotoXY(1, 0);
+									lcdPuts("_____________|_");
+								}
+								else if (an == 22)
+								{
+									//lcdGotoXY(0, 0);
+									//lcdPuts("               ");
+									lcdGotoXY(1, 0);
+									lcdPuts("______________|");
+								}
+								else if (an == 23)
+								{
+									//lcdGotoXY(0, 0);
+									//lcdPuts("               ");
+									lcdGotoXY(1, 0);
+									lcdPuts("_______________");
+								}
+								_delay_ms(100);
+								lcdClear();
+								_delay_ms(10);
+							}
+						}
+						lcdClear();
+						_delay_ms(10);
+						ti--;
+////////////////////////////////////////////////////////////////////////////						
+						/*if (period_on == 0)
 						{
 							period_on = 1;
 						}
@@ -156,18 +362,19 @@ int main (void)
 							lcdClear();
 							_delay_ms(10);
 						}
-					}
+					}*/
 					lcdGotoXY(0, 0);
 					lcdPuts("No.");
-					lcdGotoXY(0, 5);
-					lcdPuts("(^-^)");
-					lcdGotoXY(0, 14);
-					lcdPuts("*:");
+					lcdGotoXY(0, 6);
+					lcdPuts("Hello!");
+					//lcdGotoXY(0, 14);
+					//lcdPuts("*:");
 					lcdGotoXY(1, 0);
 					lcdPuts(all_var);
-					lcdGotoXY(1, 5);
-					lcdPuts("Hello!");
-					if (period_on != 0)
+					//lcdGotoXY(1, 5);
+					//lcdPuts("/(^_^)/");
+					
+					/*if (period_on != 0)
 					{
 						period_on++;
 						eeprom_busy_wait();
@@ -176,14 +383,7 @@ int main (void)
 						ultoa(period_on, period_var, 10);
 						lcdGotoXY(1, 14);
 						lcdPuts(period_var);	
-					}
-////////////////////////////////////////////////////////////////////////////					
-					if (ti == 0)
-					{								
-						oneWireInit(PINB2);
-						searchRom(roms, &tn);
-						_delay_ms(50);
-					}				
+					}*/			
 ////////////////////////////////////////////////////////////////////////////					
 					temperature = getTemp(roms[ti]);
 					int fs[2];
@@ -197,7 +397,7 @@ int main (void)
 					{
 						continue;
 					}
-					if (ti < 2)
+					if (ti == 0)
 					{
 						if (temperature < 0) 
 						{
@@ -210,7 +410,7 @@ int main (void)
 						strcat(text1, num2);
 						strcat(text1, "'C ");
 					}
-					if (ti == 2)
+					if (ti == 1)
 					{
 						if (temperature < 0) 
 						{
@@ -223,7 +423,22 @@ int main (void)
 						strcat(text2, num2);
 						strcat(text2, "'C ");
 					}
-					_delay_ms(50);
+					/*if (ti == 2)
+					{
+						if (temperature < 0) 
+						{
+							strcat(text3, "-");
+						}
+						itoa(fs[0], num2, 10);
+						strcat(text3, num2);
+						strcat(text3, ".");
+						itoa(fs[1], num2, 10);
+						strcat(text3, num2);
+						strcat(text3, "'C ");
+					}*/
+					_delay_ms(30);
+					lcdClear();
+					_delay_ms(10);
 				}
 			}
 ////////////////////////////////////////////////////////////////////////////			
@@ -243,63 +458,67 @@ int main (void)
 							break;
 						}	
 					}	
-					lcdClear();
-					_delay_ms(30);
+					//lcdClear();
+					//_delay_ms(30);
 					for(j=0; j<=333; j++)
 					{
-						lcdGotoXY(1,4); 
-						lcdPuts("Unlocked"); 
+						//lcdGotoXY(1,4); 
+						//lcdPuts("Unlocked"); 
 						PORTB |=(1<<3);    //высокий уровень 
 						PORTB |=(1<<5);    //высокий уровень 
 						_delay_ms(30);
 					}
 					PORTB &= ~(1<<3);    //низкий уровень
 					PORTB &= ~(1<<5);    //низкий уровень
-					lcdClear();
-					_delay_ms(30);
+					//lcdClear();
+					//_delay_ms(30);
 				}
 ////////////////////////////////////////////////////////////////////////////								
 				//lcdGotoXY(0, 0);
 				//lcdPuts(txt);
-				lcdGotoXY(0, 0);
+				//lcdGotoXY(0, 0);
+				//lcdPuts(text3);
+				lcdGotoXY(0, 9);
 				lcdPuts(text1);
-				lcdGotoXY(1, 0);
+				lcdGotoXY(1, 9);
 				lcdPuts(text2);
 ////////////////////////////////////////////////////////////////////////////
-				lcdGotoXY(1,7); 
-				lcdPuts("["); 
+				lcdGotoXY(0,0); 
+				lcdPuts("Code:"); 
+				lcdGotoXY(1,0); 
+				lcdPuts(">"); 
 				Result_Copy = atol(Result);
-				lcdGotoXY(1,8); 
+				lcdGotoXY(1,1); 
 				lcdPuts(Result); 
 				if (f == -1)
 				{
-					lcdGotoXY(1,8); 
-					lcdPuts("....."); 
+					lcdGotoXY(1,1); 
+					lcdPuts("...."); 
 				}
 				else if (f == 0)
 				{
-					lcdGotoXY(1,9); 
-					lcdPuts("....");	
+					lcdGotoXY(1,2); 
+					lcdPuts("...");	
 				}
 				else if (f == 1)
 				{
-					lcdGotoXY(1,10); 
-					lcdPuts("...");	
+					lcdGotoXY(1,3); 
+					lcdPuts("..");	
 				}
 				else if (f == 2)
 				{
-					lcdGotoXY(1,11); 
-					lcdPuts("..");	
-				}
-				else if (f == 3)
-				{
-					lcdGotoXY(1,12); 
+					lcdGotoXY(1,4); 
 					lcdPuts(".");	
 				}
-				lcdGotoXY(1,13); 
-				lcdPuts("]"); 
+				//else if (f == 3)
+				//{
+					//lcdGotoXY(1,5); 
+					//lcdPuts(".");	
+				//}
+				//lcdGotoXY(1,6); 
+				//lcdPuts("]"); 
 				// Выводим значение нажатой кнопки на индикатор
-				for (j=0; j<5; j++)
+				for (j=0; j<=z; j++)
 				{
 					if (Result[j]==0)
 					{
@@ -323,7 +542,7 @@ int main (void)
 					while(scan_key()==10);
 					cycle--;
 					//_delay_ms(30);
-					if(Result[4]!=0) 
+					if(Result[z]!=0) 
 					{
 						for (n=12; n<129; n+=4)
 						{
@@ -380,7 +599,7 @@ int main (void)
 										lcdGotoXY (0,7);
 										lcdPuts(Code);
 										// Выводим значение нажатой кнопки на индикатор
-										for (j=0; j<5; j++)
+										for (j=0; j<=z; j++)
 										{
 											if (Code[j]==0)
 											{
@@ -403,7 +622,7 @@ int main (void)
 										{
 											while(scan_key()==10);
 											//_delay_ms(30);
-											if(Code[4]!=0) 
+											if(Code[z]!=0) 
 											{
 												for(n=12; n<129; n+=4)
 												{
@@ -431,7 +650,7 @@ int main (void)
 												i = 0;
 												break;
 											}
-											else 
+											/*else 
 											{
 												//memset(Code, 0, sizeof Code);//----------
 												lcdClear();
@@ -447,10 +666,10 @@ int main (void)
 												PORTB &= ~(1<<6);    //низкий уровень
 												lcdClear();
 												_delay_ms(30);
-											}
+											}*/
 										}
 //--------------------------------------------------------------------------								
-										if(scan_key()==12)
+										/*if(scan_key()==12)
 										{
 											while(scan_key()==12);
 											//_delay_ms(30);
@@ -465,7 +684,7 @@ int main (void)
 											PORTB &= ~(1<<6);    //низкий уровень
 											lcdClear();
 											_delay_ms(30);
-										}
+										}*/
 										_delay_ms(10);
 									}
 									lcdClear();
@@ -486,7 +705,7 @@ int main (void)
 										lcdGotoXY (0,10);
 										lcdPuts(Code);
 										// Выводим значение нажатой кнопки на индикатор
-										for (j=0; j<5; j++)
+										for (j=0; j<=z; j++)
 										{
 											if (Code[j]==0)
 											{
@@ -509,7 +728,7 @@ int main (void)
 										{
 											while(scan_key()==10);
 											//_delay_ms(30);
-											if(Code[4]!=0) 
+											if(Code[z]!=0) 
 											{
 												for(n=12; n<129; n+=4)
 												{
@@ -546,7 +765,7 @@ int main (void)
 												i = 0;
 												break;
 											}
-											else 
+											/*else 
 											{
 												//memset(Code, 0, sizeof Code);//----------
 												lcdClear();
@@ -562,10 +781,10 @@ int main (void)
 												PORTB &= ~(1<<6);    //низкий уровень
 												lcdClear();
 												_delay_ms(30);
-											}
+											}*/
 										}
 //--------------------------------------------------------------------------								
-										if(scan_key()==12)
+										/*if(scan_key()==12)
 										{
 											while(scan_key()==12);
 											//_delay_ms(30);
@@ -580,7 +799,7 @@ int main (void)
 											PORTB &= ~(1<<6);    //низкий уровень
 											lcdClear();
 											_delay_ms(30);
-										}
+										}*/
 										_delay_ms(10);
 									}
 									lcdClear();
@@ -633,7 +852,7 @@ int main (void)
 													}
 													if(scan_key()==12)
 													{
-														while(scan_key()==12);
+														/*while(scan_key()==12);
 														//_delay_ms(30);
 														cc = 1;
 														lcdClear();
@@ -647,7 +866,7 @@ int main (void)
 															PORTB |=(1<<6);    //высокий уровень
 															_delay_ms(30);
 														}
-														PORTB &= ~(1<<6);    //низкий уровень
+														PORTB &= ~(1<<6);    //низкий уровень*/
 														break;
 													}
 													_delay_ms(30);
@@ -690,7 +909,7 @@ int main (void)
 										lcdGotoXY (0,10);
 										lcdPuts(Code);
 										// Выводим значение нажатой кнопки на индикатор
-										for (j=0; j<5; j++)
+										for (j=0; j<=z; j++)
 										{
 											if (Code[j]==0)
 											{
@@ -713,29 +932,26 @@ int main (void)
 										{
 											while(scan_key()==10);
 											//_delay_ms(30);
-											if(Code[4]!=0) 
+											if(Code[z]!=0) 
 											{
-												if (Code[0] != 0)
+												n = 8;
+												eeprom_busy_wait();
+												eeprom_write_dword(n, Code_Copy);
+												lcdClear();
+												_delay_ms(30);
+												for(iii=0; iii<=100; iii++)
 												{
-													n = 8;
-													eeprom_busy_wait();
-													eeprom_write_dword(n, Code_Copy);
-													lcdClear();
+													lcdGotoXY(1,5);
+													lcdPuts("Changed");
+													//зеленый светодиод
+													PORTB |=(1<<5);    //высокий уровень
 													_delay_ms(30);
-													for(iii=0; iii<=100; iii++)
-													{
-														lcdGotoXY(1,5);
-														lcdPuts("Changed");
-														//зеленый светодиод
-														PORTB |=(1<<5);    //высокий уровень
-														_delay_ms(30);
-													}
-													PORTB &= ~(1<<5);    //низкий уровень
-													i = 0;
-													break;
 												}
+												PORTB &= ~(1<<5);    //низкий уровень
+												i = 0;
+												break;
 											}
-											else 
+											/*else 
 											{
 												//memset(Code, 0, sizeof Code);//----------
 												lcdClear();
@@ -751,10 +967,10 @@ int main (void)
 												PORTB &= ~(1<<6);    //низкий уровень
 												lcdClear();
 												_delay_ms(30);
-											}
+											}*/
 										}
 //--------------------------------------------------------------------------								
-										if(scan_key()==12)
+										/*if(scan_key()==12)
 										{
 											while(scan_key()==12);
 											//_delay_ms(30);
@@ -769,7 +985,7 @@ int main (void)
 											PORTB &= ~(1<<6);    //низкий уровень
 											lcdClear();
 											_delay_ms(30);
-										}
+										}*/
 										_delay_ms(10);
 									}
 									lcdClear();
@@ -784,7 +1000,7 @@ int main (void)
 						lcdClear();
 						_delay_ms(30);
 					}
-					else  if (Result[4] == 0) 
+					/*else  if (Result[4] == 0) 
 					{
 						//memset(Result, 0, sizeof Code);//----------
 						lcdClear();
@@ -800,7 +1016,7 @@ int main (void)
 						PORTB &= ~(1<<6);    //низкий уровень
 						lcdClear();
 						_delay_ms(30);
-					}
+					}*/
 				}
 ////////////////////////////////////////////////////////////////////////////			
 				if(scan_key()==12)
@@ -827,7 +1043,7 @@ int main (void)
 		{
 			//Выключаем порт реле
 			PORTB &= ~(1<<4);    //низкий уровень
-			_delay_ms(30);
+			//_delay_ms(30);
 			if (cycle == 100)
 			{
 				cycle = 1;

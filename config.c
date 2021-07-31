@@ -13,7 +13,7 @@ double getTemp(uint64_t ds18b20s) {
   uint8_t temperatureH;
   double retd = 0;
   
-  unsigned short tp; // объявляем переменную для цикла
+  //unsigned short tp; // объявляем переменную для цикла
   
   //skipRom();
   setDevice(ds18b20s);
