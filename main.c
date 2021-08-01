@@ -562,35 +562,7 @@ int main (void)
 					//cycle--;
 					//_delay_ms(30);
 					if(Result[z]!=0) 
-					{
-						for (n=12; n<129; n+=4)
-						{
-							eeprom_busy_wait();
-							var = eeprom_read_dword(n);
-							if  (Result_Copy  ==  var) 
-							{ 
-								flag++;
-								all_on++;
-								eeprom_busy_wait();
-								eeprom_write_dword(0, all_on);
-								lcdClear();
-								_delay_ms(30);
-								for(j=0; j<=zt; j++)
-								{
-									lcdGotoXY(1,4); 
-									lcdPuts("Unlocked"); 
-									//Включаем порт реле
-									PORTB |=(1<<3);    //высокий уровень
-									//зеленый светодиод
-									PORTB |=(1<<5);    //высокий уровень 
-									_delay_ms(30);
-								}
-								PORTB &= ~(1<<3);    //низкий уровень
-								PORTB &= ~(1<<5);    //низкий уровень
-								break;
-							}
-						}
-//--------------------------------------------------------------------------				
+					{				
 						n = 8;
 						eeprom_busy_wait();
 						var = eeprom_read_dword(n);
@@ -649,21 +621,27 @@ int main (void)
 //--------------------------------------------------------------------------								
 										if (scan_key()==12) 
 										{
-											n = 8;
-											eeprom_busy_wait();
-											eeprom_write_dword(n, Code_Copy);
-											lcdClear();
-											_delay_ms(30);
-											for(iii=0; iii<=100; iii++)
+											while(scan_key()==10);
+											//_delay_ms(30);
+											if(Code[z]!=0) 
 											{
-												lcdGotoXY(1,5);
-												lcdPuts("Changed");
-												//зеленый светодиод
-												PORTB |=(1<<5);    //высокий уровень
+												n = 8;
+												eeprom_busy_wait();
+												eeprom_write_dword(n, Code_Copy);
+												lcdClear();
 												_delay_ms(30);
+												for(iii=0; iii<=100; iii++)
+												{
+													lcdGotoXY(1,5);
+													lcdPuts("Changed");
+													//зеленый светодиод
+													PORTB |=(1<<5);    //высокий уровень
+													_delay_ms(30);
+												}
+												PORTB &= ~(1<<5);    //низкий уровень
+												i = 0;
+												break;
 											}
-											PORTB &= ~(1<<5);    //низкий уровень
-											break;
 										}
 										if (scan_key()==10) 
 										{
@@ -671,10 +649,6 @@ int main (void)
 											//_delay_ms(30);
 											if(Code[z]!=0) 
 											{
-												if (Code_Copy == var)  
-												{
-													
-												}
 												for(n=12; n<129; n+=4)
 												{
 													nn = n;
@@ -1045,6 +1019,35 @@ int main (void)
 								_delay_ms(30);
 							}
 						}
+//--------------------------------------------------------------------------						
+						for (n=12; n<129; n+=4)
+						{
+							eeprom_busy_wait();
+							var = eeprom_read_dword(n);
+							if  (Result_Copy  ==  var) 
+							{ 
+								flag++;
+								all_on++;
+								eeprom_busy_wait();
+								eeprom_write_dword(0, all_on);
+								lcdClear();
+								_delay_ms(30);
+								for(j=0; j<=zt; j++)
+								{
+									lcdGotoXY(1,4); 
+									lcdPuts("Unlocked"); 
+									//Включаем порт реле
+									PORTB |=(1<<3);    //высокий уровень
+									//зеленый светодиод
+									PORTB |=(1<<5);    //высокий уровень 
+									_delay_ms(30);
+								}
+								PORTB &= ~(1<<3);    //низкий уровень
+								PORTB &= ~(1<<5);    //низкий уровень
+								break;
+							}
+						}
+//--------------------------------------------------------------------------						
 						//if (flag==1)
 						//{
 							//cycle--;
