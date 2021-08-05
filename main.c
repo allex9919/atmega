@@ -82,8 +82,8 @@ int main (void)
 	//char text3[16] = "";
 	uint8_t ti = 0;
 	//char txt[16] = "";
-	char all_var[3] = "";
-	char period_var[2] = "";
+	char all_var[4] = "";
+	char period_var[3] = "";
 	//unsigned short an; 
 	//unsigned short anim;	
 	unsigned short r = 0;
