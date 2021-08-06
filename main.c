@@ -35,7 +35,7 @@ int main (void)
 	eeprom_busy_wait();
 	eeprom_write_dword(adr4, mem4);*/
 //--------------------------------------------------------------------------	
-	uint32_t all_on = 0;
+	uint32_t all_on;
 	eeprom_busy_wait();
 	all_on = eeprom_read_dword(0);
 	if (all_on == 999)
@@ -43,7 +43,7 @@ int main (void)
 		all_on = 0;
 	}
 //--------------------------------------------------------------------------	
-	uint32_t period_on = 0;
+	uint32_t period_on;
 	eeprom_busy_wait();
 	period_on = eeprom_read_dword(4);
 	if (period_on == 99)
@@ -53,9 +53,10 @@ int main (void)
 //--------------------------------------------------------------------------
 	int z = 3; //Выбираем разрядность кода
 	unsigned short zt = 200; //Выбираем задержку при delay(30)
-	unsigned short ct = 600; //Выбираем задержку при delay(10)
-	unsigned short ct2 = ct;
-	unsigned short ct3 = ct/3;
+	unsigned short ct = 700; //Выбираем задержку при delay(10)
+	unsigned short ct2 = 1000;
+	unsigned short ct22 = ct2 - 1;
+	unsigned short ct3 = 200;
 	unsigned short m; // объявляем переменную для цикла
 	unsigned short i; // объявляем переменную для цикла
 	unsigned short ii; // объявляем переменную для цикла
@@ -63,24 +64,24 @@ int main (void)
 	unsigned short j; // объявляем переменную для цикла
 	short f = -1; 
 	short ff; 
-	uint32_t n = 0;
-	uint8_t nn = 0;
+	uint32_t n;
+	uint8_t nn;
 	char Result[6] = ""; 
-	char Code[6] = "";
+	char Code[6];
 	int Result_Copy = 0;
 	uint32_t Code_Copy = 0;
-	uint32_t var = 0;
-	uint32_t var2 = 0;
-	uint8_t var3 = 0;
-	unsigned int c = 0;
-	unsigned int cc = 0;
-	char Num[4] = "";
+	uint32_t var;
+	uint32_t var2;
+	uint8_t var3;
+	unsigned int c;
+	unsigned int cc;
+	char Num[4];
 	int cycle = 0;
 	int cycle2 = 0; 
 	char text1[16] = "";
 	char text2[16] = "";
 	//char text3[16] = "";
-	uint8_t ti = 0;
+	uint8_t ti;
 	//char txt[16] = "";
 	char all_var[4] = "";
 	char period_var[3] = "";
@@ -93,6 +94,11 @@ int main (void)
 //--------------------------------------------------------------------------	
 	while(1) 
 	{	
+		if(scan_key()!=0)
+		{
+			cycle = 0;
+		}
+////////////////////////////////////////////////////////////////////////////
 		PORTB |=(1<<6);    //высокий уровень 
 		if (PINB & (1<<PB3)) 
 		{
@@ -122,18 +128,19 @@ int main (void)
 			PORTB |=(1<<4);    //высокий уровень
 			//for(j=0; j<=33; j++)
 			//{
-				_delay_ms(100);
-			//}
+				_delay_ms(30);
+			//}	
+////////////////////////////////////////////////////////////////////////////
 			if (cycle2 == 0)
-			{
-////////////////////////////////////////////////////////////////////////////				
+			{	
 				cycle2 = 1;
+////////////////////////////////////////////////////////////////////////////				
 				lcdInit();
 				_delay_ms(10);
 				lcdSetCursor(LCD_CURSOR_OFF);
 				_delay_ms(10);
 				lcdSetDisplay(LCD_DISPLAY_ON);
-				_delay_ms(10);				
+				_delay_ms(10);		
 ////////////////////////////////////////////////////////////////////////////				
 				double temperature;
 				uint8_t tn = 8;
@@ -457,7 +464,7 @@ int main (void)
 			//f = -1;//------------------
 			//r = 0;
 			lcdClear();
-			_delay_ms(30);
+			_delay_ms(10);
 ////////////////////////////////////////////////////////////////////////////		
 			for(m=0; m<ct2; m++)
 			{ 
@@ -1107,6 +1114,13 @@ int main (void)
 						_delay_ms(30);
 					}
 				}
+////////////////////////////////////////////////////////////////////////////				
+				if (m == ct22)
+				{
+					memset(Result, 0, sizeof Result);//------------------
+					f = -1;//------------------
+					r = 0;
+				}
 ////////////////////////////////////////////////////////////////////////////			
 				_delay_ms(10);		
 			}
@@ -1115,7 +1129,7 @@ int main (void)
 		{
 			//Выключаем порт реле
 			PORTB &= ~(1<<4);    //низкий уровень
-			//_delay_ms(30);
+			_delay_ms(30);
 			if (cycle == 100)
 			{
 				cycle = 1;
