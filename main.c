@@ -54,8 +54,8 @@ int main (void)
 //--------------------------------------------------------------------------
 	int z = 3; //Выбираем разрядность кода
 	unsigned short zt = 200; //Выбираем задержку при delay(30)
-	unsigned short ct = 500; //Выбираем задержку при delay(10)
-	unsigned short ct2 = 500;
+	unsigned short ct = 700; //Выбираем задержку при delay(10)
+	unsigned short ct2 = 700;
 	unsigned short ct22 = ct2 - 1;
 	unsigned short ct3 = 200;
 	unsigned short m; // объявляем переменную для цикла
@@ -1114,7 +1114,7 @@ int main (void)
 				PORTB &= ~(1<<4);    //низкий уровень
 				_delay_ms(30);
 //--------------------------------------------------------------------------				
-				for(m=0; m<100; m++)
+				for(m=0; m<400; m++)
 				{
 					PORTB &= ~(1<<7);    //низкий уровень
 					_delay_ms(10);
