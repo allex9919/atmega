@@ -26,16 +26,21 @@ int main (void)
 	eeprom_busy_wait();
 	eeprom_write_dword(adr2, mem2);
 //--------------------------------------------------------------------------		
-	uint32_t mem3 = 1111;
+	uint32_t mem3 = 0;
 	uint32_t adr3 = 8;
 	eeprom_busy_wait();
 	eeprom_write_dword(adr3, mem3);
-//--------------------------------------------------------------------------	
-	uint32_t mem4 = 2222;
+//--------------------------------------------------------------------------		
+	uint32_t mem4 = 1111;
 	uint32_t adr4 = 12;
 	eeprom_busy_wait();
-	eeprom_write_dword(adr4, mem4);*/
+	eeprom_write_dword(adr4, mem4);
 //--------------------------------------------------------------------------	
+	uint32_t mem5 = 5555;
+	uint32_t adr5 = 16;
+	eeprom_busy_wait();
+	eeprom_write_dword(adr5, mem5);*/
+//--------------------------------------------------------------------------			
 	uint32_t all_on;
 	eeprom_busy_wait();
 	all_on = eeprom_read_dword(0);
@@ -51,6 +56,17 @@ int main (void)
 	{
 		period_on = 0;
 	}
+//--------------------------------------------------------------------------
+	uint32_t vcc_on;
+	eeprom_busy_wait();
+	vcc_on = eeprom_read_dword(8);
+	vcc_on++;
+	if (vcc_on == 999)
+	{
+		vcc_on = 0;
+	}
+	eeprom_busy_wait();
+	eeprom_write_dword(8, vcc_on);
 //--------------------------------------------------------------------------
 	int z = 3; //Выбираем разрядность кода
 	unsigned short zt = 200; //Выбираем задержку при delay(30)
@@ -84,6 +100,7 @@ int main (void)
 	//char text3[16] = "";
 	uint8_t ti;
 	//char txt[16] = "";
+	char vcc_var[4] = "";
 	char all_var[4] = "";
 	char period_var[3] = "";
 	//unsigned short an; 
@@ -135,21 +152,22 @@ int main (void)
 ////////////////////////////////////////////////////////////////////////////				
 				utoa(all_on, all_var, 10);
 				utoa(period_on, period_var, 10);
+				utoa(vcc_on, vcc_var, 10);
 				for (ti = 0; ti < 3; ti++)
 				{
 					if (ti == 0)
 					{
-						lcdGotoXY(1, 6);
+						lcdGotoXY(1, 5);
 						lcdPuts("/(^-^)/");
 					}
 					else if (ti == 1)
 					{
-						lcdGotoXY(1, 6);
+						lcdGotoXY(1, 5);
 						lcdPuts("-(^-^)-");
 					}
 					else if (ti == 2)
 					{
-						lcdGotoXY(1, 6);
+						lcdGotoXY(1, 5);
 						lcdPuts("/(^-^)/");
 					}
 					/*if (scan_key()==10) 
@@ -354,9 +372,17 @@ int main (void)
 					}*/
 					//lcdGotoXY(0, 0);
 					//lcdPuts(">");
-					lcdGotoXY(0, 0);
-					lcdPuts(period_var);
-					lcdGotoXY(0, 6);
+					if (period_var[1] == 0)
+					{
+						lcdGotoXY(0, 15);
+						lcdPuts(period_var);
+					}
+					else if (period_var[1] != 0)
+					{
+						lcdGotoXY(0, 14);
+						lcdPuts(period_var);	
+					}
+					lcdGotoXY(0, 5);
 					lcdPuts("Hello!");
 					//lcdGotoXY(0, 14);
 					//lcdPuts("*:");
@@ -366,6 +392,8 @@ int main (void)
 					lcdPuts(all_var);
 					//lcdGotoXY(1, 5);
 					//lcdPuts("/(^_^)/");
+					lcdGotoXY(0, 0);
+					lcdPuts(vcc_var);
 					
 					/*if (period_on != 0)
 					{
@@ -429,7 +457,7 @@ int main (void)
 						strcat(text3, num2);
 						strcat(text3, "'C ");
 					}*/
-					_delay_ms(30);
+					_delay_ms(20);
 					lcdClear();
 					_delay_ms(10);
 				}
@@ -545,12 +573,12 @@ int main (void)
 					//_delay_ms(30);
 					if(Result[z]!=0) 
 					{				
-						n = 8;
+						n = 12;
 						eeprom_busy_wait();
 						var = eeprom_read_dword(n);
 						if (Result_Copy == var)  
 						{
-							flag++;
+							flag = 1;
 							period_on++;
 							eeprom_busy_wait();
 							eeprom_write_dword(4, period_on);
@@ -563,9 +591,9 @@ int main (void)
 								cc = 0;//----------
 								ff = -1;//----------
 								lcdGotoXY(0,0);
-								lcdPuts("*:Add/Change");
+								lcdPuts("*:Add/Del/Change");
 								lcdGotoXY(1,0);
-								lcdPuts("#:Delete/0:List");
+								lcdPuts("#:List");
 ////////////////////////////////////////////////////////////////////////////						
 								if (scan_key()==10) 
 								{
@@ -574,8 +602,10 @@ int main (void)
 									_delay_ms(30);
 									for(ii=0; ii<ct; ii++)
 									{
+										lcdGotoXY(0,6);
+										lcdPuts("*:Change");
 										lcdGotoXY(1,0);
-										lcdPuts("*:Add #:Change");
+										lcdPuts("0:Add 1:Delete");
 										lcdGotoXY(0,0);
 										lcdPuts(">");
 										Code_Copy = atol(Code);
@@ -601,13 +631,13 @@ int main (void)
 											}
 										}
 //--------------------------------------------------------------------------								
-										if (scan_key()==12) 
+										if (scan_key()==10) 
 										{
 											while(scan_key()==10);
 											//_delay_ms(30);
 											if(Code[z]!=0) 
 											{
-												n = 8;
+												n = 12;
 												eeprom_busy_wait();
 												eeprom_write_dword(n, Code_Copy);
 												lcdClear();
@@ -625,13 +655,55 @@ int main (void)
 												break;
 											}
 										}
-										if (scan_key()==10) 
+										if (scan_key()==1) 
+										{
+											while(scan_key()==12);
+											//_delay_ms(30);
+											if(Code[z]!=0) 
+											{
+												for(n=16; n<129; n+=4)
+												{
+													eeprom_busy_wait();
+													var2 = eeprom_read_dword(n);
+													if (Code_Copy == var2)
+													{
+														nn = n;
+														eeprom_busy_wait();
+														eeprom_write_byte(nn, 0xFF);
+														nn++;
+														eeprom_busy_wait();
+														eeprom_write_byte(nn, 0xFF);
+														nn++;
+														eeprom_busy_wait();
+														eeprom_write_byte(nn, 0xFF);
+														nn++;
+														eeprom_busy_wait();
+														eeprom_write_byte(nn, 0xFF);
+														lcdClear();
+														_delay_ms(30);
+														for(iii=0; iii<=100; iii++)
+														{
+															lcdGotoXY(1,4);
+															lcdPuts("Deleted");
+															//зеленый светодиод
+															PORTB |=(1<<5);    //высокий уровень
+															_delay_ms(30);
+														}
+														PORTB &= ~(1<<5);    //низкий уровень
+														break;
+													}
+												}
+												i = 0;
+												break;
+											}
+										}											
+										if (scan_key()==11) 
 										{
 											while(scan_key()==10);
 											//_delay_ms(30);
 											if(Code[z]!=0) 
 											{
-												for(n=12; n<129; n+=4)
+												for(n=16; n<129; n+=4)
 												{
 													nn = n;
 													eeprom_busy_wait();
@@ -676,7 +748,7 @@ int main (void)
 											}*/
 										}
 //--------------------------------------------------------------------------								
-										/*if(scan_key()==12)
+										if(scan_key()==12)
 										{
 											while(scan_key()==12);
 											//_delay_ms(30);
@@ -691,14 +763,14 @@ int main (void)
 											PORTB &= ~(1<<6);    //низкий уровень
 											lcdClear();
 											_delay_ms(30);
-										}*/
+										}
 										_delay_ms(10);
 									}
 									lcdClear();
 									_delay_ms(30);
 								}
 ////////////////////////////////////////////////////////////////////////////						
-								if (scan_key()==12) 
+								/*if (scan_key()==12) 
 								{
 									while(scan_key()==12);
 									//_delay_ms(30);
@@ -737,7 +809,7 @@ int main (void)
 											//_delay_ms(30);
 											if(Code[z]!=0) 
 											{
-												for(n=12; n<129; n+=4)
+												for(n=16; n<129; n+=4)
 												{
 													eeprom_busy_wait();
 													var2 = eeprom_read_dword(n);
@@ -789,7 +861,7 @@ int main (void)
 												lcdClear();
 												_delay_ms(30);
 											}*/
-										}
+										//}
 //--------------------------------------------------------------------------								
 										/*if(scan_key()==12)
 										{
@@ -806,18 +878,18 @@ int main (void)
 											PORTB &= ~(1<<6);    //низкий уровень
 											lcdClear();
 											_delay_ms(30);
-										}*/
+										}*//*
 										_delay_ms(10);
 									}
 									lcdClear();
 									_delay_ms(30);
-								}
+								}*/
 ////////////////////////////////////////////////////////////////////////////						
-								if (scan_key()==11) 
+								if (scan_key()==12) 
 								{
 									while(scan_key()==11);
 									//_delay_ms(30);
-									for(n=12; n<129; n+=4)
+									for(n=16; n<129; n+=4)
 									{
 										memset(Code, 0, sizeof Code);//-------------
 										memset(Num, 0, sizeof Num);//--------------
@@ -1002,13 +1074,13 @@ int main (void)
 							}
 						}
 //--------------------------------------------------------------------------						
-						for (n=12; n<129; n+=4)
+						for (n=16; n<129; n+=4)
 						{
 							eeprom_busy_wait();
 							var = eeprom_read_dword(n);
 							if  (Result_Copy  ==  var) 
 							{ 
-								flag++;
+								flag = 2;
 								all_on++;
 								eeprom_busy_wait();
 								eeprom_write_dword(0, all_on);
@@ -1016,14 +1088,14 @@ int main (void)
 								_delay_ms(30);
 								for(j=0; j<=zt; j++)
 								{
-									if (j<100)
-									{
+									//if (j<100)
+									//{
 										PORTB |=(1<<3);    //высокий уровень
-									}
-									else if (j>=100)
-									{
-										PORTB &= ~(1<<3);    //низкий уровень
-									}									
+									//}
+									//else if (j>=100)
+									//{
+										//PORTB &= ~(1<<3);    //низкий уровень
+									//}									
 									lcdGotoXY(1,4); 
 									lcdPuts("Unlocked"); 
 									//зеленый светодиод
@@ -1049,6 +1121,10 @@ int main (void)
 							else if (flag == 1)
 							{
 								flag = 0;
+							}
+							else if (flag == 2)
+							{
+								break;
 							}
 						//}
 						//memset(Result, 0, sizeof Result);//------------------
