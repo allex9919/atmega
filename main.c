@@ -44,26 +44,26 @@ int main (void)
 	uint32_t all_on;
 	eeprom_busy_wait();
 	all_on = eeprom_read_dword(0);
-	if (all_on == 999)
+	if (all_on >= 999)
 	{
-		all_on = 0;
+		all_on = 999;
 	}
 //--------------------------------------------------------------------------	
 	uint32_t period_on;
 	eeprom_busy_wait();
 	period_on = eeprom_read_dword(4);
-	if (period_on == 99)
+	if (period_on >= 99)
 	{
-		period_on = 0;
+		period_on = 99;
 	}
 //--------------------------------------------------------------------------
 	uint32_t vcc_on;
 	eeprom_busy_wait();
 	vcc_on = eeprom_read_dword(8);
 	vcc_on++;
-	if (vcc_on == 999)
+	if (vcc_on >= 999)
 	{
-		vcc_on = 0;
+		vcc_on = 999;
 	}
 	eeprom_busy_wait();
 	eeprom_write_dword(8, vcc_on);
@@ -1102,6 +1102,10 @@ int main (void)
 									PORTB |=(1<<5);    //высокий уровень 
 									_delay_ms(30);
 								}
+								Result_Copy = 0;
+								memset(Result, 0, sizeof Result);//------------------
+								f = -1;//------------------
+								r = 0;
 								PORTB &= ~(1<<3);    //низкий уровень
 								PORTB &= ~(1<<5);    //низкий уровень
 								break;
