@@ -103,8 +103,8 @@ int main (void)
 	char vcc_var[4] = "";
 	char all_var[4] = "";
 	char period_var[3] = "";
-	//unsigned short an; 
-	//unsigned short anim;	
+	unsigned short an; 
+	unsigned short anim;	
 	unsigned short r = 0;
 	int flag = 0; 
 //--------------------------------------------------------------------------	
@@ -170,192 +170,80 @@ int main (void)
 						lcdGotoXY(1, 5);
 						lcdPuts("/(^-^)/");
 					}
-					/*if (scan_key()==10) 
+					if (scan_key()==10) 
 					{
 						while(scan_key()==10);
 ////////////////////////////////////////////////////////////////////////////						
 						lcdClear();
 						_delay_ms(10);
-						for (anim = 0; anim < 3; anim++)
+						for (anim = 0; anim < 17; anim++)
 						{
-							for (an = 0; an < 24; an++)
+							PORTB |=(1<<5);    //высокий уровень
+							PORTB |=(1<<6);    //высокий уровень
+							
+							lcdGotoXY(0, 0);
+							lcdPuts("Model: ");
+							lcdGotoXY(1, 0);
+							lcdPuts("Version: ");
+							
+							if (anim == 0)
 							{
-								if (an == 0)
-								{
-									lcdGotoXY(0, 0);
-									lcdPuts("");
-									lcdGotoXY(1, 0);
-									lcdPuts("________________");
-								}
-								else if (an == 1)
-								{
-									lcdGotoXY(0, 0);
-									lcdPuts("");
-									lcdGotoXY(1, 0);
-									lcdPuts(")_______________");
-								}
-								else if (an == 2)
-								{
-									lcdGotoXY(0, 0);
-									lcdPuts("_");
-									lcdGotoXY(1, 0);
-									lcdPuts("_)______________");
-								}
-								else if (an == 3)
-								{
-									lcdGotoXY(0, 0);
-									lcdPuts("__");
-									lcdGotoXY(1, 0);
-									lcdPuts("0_)_____________");
-								}
-								else if (an == 4)
-								{
-									lcdGotoXY(0, 0);
-									lcdPuts("/__");
-									lcdGotoXY(1, 0);
-									lcdPuts("_0_)____________");
-								}
-								else if (an == 5)
-								{
-									lcdGotoXY(0, 0);
-									lcdPuts("_/__");
-									lcdGotoXY(1, 0);
-									lcdPuts("0_0_)___________");
-								}
-								else if (an == 6)
-								{
-									lcdGotoXY(0, 0);
-									lcdPuts("__/__");
-									lcdGotoXY(1, 0);
-									lcdPuts("_0_0_)__________");
-								}
-								else if (an == 7)
-								{
-									lcdGotoXY(0, 0);
-									lcdPuts(" __/__");
-									lcdGotoXY(1, 0);
-									lcdPuts("|_0_0_)_________");
-								}
-								else if (an == 8)
-								{
-									lcdGotoXY(0, 0);
-									lcdPuts("  __/__");
-									lcdGotoXY(1, 0);
-									lcdPuts("_|_0_0_)________");
-								}
-								else if (an == 9)
-								{
-									lcdGotoXY(0, 0);
-									lcdPuts("   __/__");
-									lcdGotoXY(1, 0);
-									lcdPuts("__|_0_0_)_______");
-								}
-								else if (an == 10)
-								{
-									lcdGotoXY(0, 0);
-									lcdPuts("    __/__");
-									lcdGotoXY(1, 0);
-									lcdPuts("___|_0_0_)______");
-								}
-								else if (an == 11)
-								{
-									lcdGotoXY(0, 0);
-									lcdPuts("     __/__");
-									lcdGotoXY(1, 0);
-									lcdPuts("____|_0_0_)_____");
-								}
-								else if (an == 12)
-								{
-									lcdGotoXY(0, 0);
-									lcdPuts("      __/__");
-									lcdGotoXY(1, 0);
-									lcdPuts("_____|_0_0_)____");
-								}
-								else if (an == 13)
-								{
-									lcdGotoXY(0, 0);
-									lcdPuts("       __/__");
-									lcdGotoXY(1, 0);
-									lcdPuts("______|_0_0_)___");
-								}
-								else if (an == 14)
-								{
-									lcdGotoXY(0, 0);
-									lcdPuts("        __/__");
-									lcdGotoXY(1, 0);
-									lcdPuts("_______|_0_0_)__");
-								}
-								else if (an == 15)
-								{
-									lcdGotoXY(0, 0);
-									lcdPuts("         __/__");
-									lcdGotoXY(1, 0);
-									lcdPuts("________|_0_0_)_");
-								}
-								else if (an == 16)
-								{
-									lcdGotoXY(0, 0);
-									lcdPuts("          __/__");
-									lcdGotoXY(1, 0);
-									lcdPuts("_________|_0_0_)");
-								}
-								else if (an == 17)
-								{
-									lcdGotoXY(0, 0);
-									lcdPuts("           __/__");
-									lcdGotoXY(1, 0);
-									lcdPuts("__________|_0_0_");
-								}
-								else if (an == 18)
-								{
-									lcdGotoXY(0, 0);
-									lcdPuts("            __/_");
-									lcdGotoXY(1, 0);
-									lcdPuts("___________|_0_0");
-								}
-								else if (an == 19)
-								{
-									lcdGotoXY(0, 0);
-									lcdPuts("             __/");
-									lcdGotoXY(1, 0);
-									lcdPuts("____________|_0_");
-								}
-								else if (an == 20)
-								{
-									lcdGotoXY(0, 0);
-									lcdPuts("             __");
-									lcdGotoXY(1, 0);
-									lcdPuts("____________|_0");
-								}
-								else if (an == 21)
-								{
-									lcdGotoXY(0, 0);
-									lcdPuts("              _");
-									lcdGotoXY(1, 0);
-									lcdPuts("_____________|_");
-								}
-								else if (an == 22)
-								{
-									//lcdGotoXY(0, 0);
-									//lcdPuts("               ");
-									lcdGotoXY(1, 0);
-									lcdPuts("______________|");
-								}
-								else if (an == 23)
-								{
-									//lcdGotoXY(0, 0);
-									//lcdPuts("               ");
-									lcdGotoXY(1, 0);
-									lcdPuts("_______________");
-								}
-								_delay_ms(100);
-								lcdClear();
-								_delay_ms(10);
+								lcdGotoXY(0, 7);
+								lcdPuts("E");
+								//lcdGotoXY(1, 9);
+								//lcdPuts("");
 							}
+							else if (anim == 1)
+							{
+								lcdGotoXY(0, 8);
+								lcdPuts("C");
+								//lcdGotoXY(1, 10);
+								//lcdPuts("");
+							}
+							else if (anim == 2)
+							{
+								lcdGotoXY(0, 9);
+								lcdPuts("L");
+								lcdGotoXY(1, 9);
+								lcdPuts("0");
+							}
+							else if (anim == 3)
+							{
+								lcdGotoXY(0, 10);
+								lcdPuts("-");
+								lcdGotoXY(1, 10);
+								lcdPuts(".");
+							}
+							else if (anim == 4)
+							{
+								lcdGotoXY(0, 11);
+								lcdPuts("1");
+								lcdGotoXY(1, 11);
+								lcdPuts("3");
+							}
+							else if (anim == 5)
+							{
+								lcdGotoXY(0, 12);
+								lcdPuts("1");
+								lcdGotoXY(1, 12);
+								lcdPuts("4");
+							}
+							/*else if (anim == 6)
+							{
+								lcdGotoXY(0, 0);
+								lcdPuts("Model: ");
+								lcdGotoXY(1, 0);
+								lcdPuts("Version: ");
+							}*/	
+							_delay_ms(700);
 						}
+						
+						PORTB &= ~(1<<5);    //низкий уровень
+						PORTB &= ~(1<<6);    //низкий уровень
+						
 						lcdClear();
 						_delay_ms(10);
-						ti--;
+						ti = -1;
 ////////////////////////////////////////////////////////////////////////////						
 						/*if (period_on == 0)
 						{
@@ -368,8 +256,8 @@ int main (void)
 							eeprom_write_dword(4, period_on);
 							lcdClear();
 							_delay_ms(10);
-						}
-					}*/
+						}*/
+					}
 					//lcdGotoXY(0, 0);
 					//lcdPuts(">");
 					if (period_var[1] == 0)
@@ -384,8 +272,8 @@ int main (void)
 					}
 					lcdGotoXY(0, 5);
 					lcdPuts("Hello!");
-					//lcdGotoXY(0, 14);
-					//lcdPuts("*:");
+					lcdGotoXY(1, 15);
+					lcdPuts("*");
 					//lcdGotoXY(1, 0);
 					//lcdPuts(">");
 					lcdGotoXY(1, 0);
@@ -591,13 +479,13 @@ int main (void)
 								cc = 0;//----------
 								ff = -1;//----------
 								lcdGotoXY(0,0);
-								lcdPuts("*:Add/Del/Change");
+								lcdPuts("*:List");
 								lcdGotoXY(1,0);
-								lcdPuts("#:List");
+								lcdPuts("#:Add/Del/Change");
 ////////////////////////////////////////////////////////////////////////////						
-								if (scan_key()==10) 
+								if (scan_key()==12) 
 								{
-									while(scan_key()==10);
+									while(scan_key()==12);
 									lcdClear();
 									_delay_ms(30);
 									for(ii=0; ii<ct; ii++)
@@ -885,9 +773,9 @@ int main (void)
 									_delay_ms(30);
 								}*/
 ////////////////////////////////////////////////////////////////////////////						
-								if (scan_key()==12) 
+								if (scan_key()==10) 
 								{
-									while(scan_key()==11);
+									while(scan_key()==10);
 									//_delay_ms(30);
 									for(n=16; n<129; n+=4)
 									{
