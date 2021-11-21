@@ -170,10 +170,10 @@ int main (void)
 						lcdGotoXY(1, 5);
 						lcdPuts("/(^-^)/");
 					}
-					if (scan_key()==10) 
+////////////////////////////////////////////////////////////////////////////					
+					/*if (scan_key()==10) 
 					{
-						while(scan_key()==10);
-////////////////////////////////////////////////////////////////////////////						
+						while(scan_key()==10);						
 						lcdClear();
 						_delay_ms(10);
 						for (anim = 0; anim < 17; anim++)
@@ -228,13 +228,13 @@ int main (void)
 								lcdGotoXY(1, 12);
 								lcdPuts("4");
 							}
-							/*else if (anim == 6)
-							{
-								lcdGotoXY(0, 0);
-								lcdPuts("Model: ");
-								lcdGotoXY(1, 0);
-								lcdPuts("Version: ");
-							}*/	
+							//else if (anim == 6)
+							//{
+								//lcdGotoXY(0, 0);
+								//lcdPuts("Model: ");
+								//lcdGotoXY(1, 0);
+								//lcdPuts("Version: ");
+							//}	
 							_delay_ms(700);
 						}
 						
@@ -245,19 +245,20 @@ int main (void)
 						_delay_ms(10);
 						ti = -1;
 ////////////////////////////////////////////////////////////////////////////						
-						/*if (period_on == 0)
-						{
-							period_on = 1;
-						}
-						else
-						{
-							period_on = 0;
-							eeprom_busy_wait();
-							eeprom_write_dword(4, period_on);
-							lcdClear();
-							_delay_ms(10);
-						}*/
-					}
+						//if (period_on == 0)
+						//{
+							//period_on = 1;
+						//}
+						//else
+						//{
+							//period_on = 0;
+							//eeprom_busy_wait();
+							//eeprom_write_dword(4, period_on);
+							//lcdClear();
+							//_delay_ms(10);
+						//}
+					}*/
+////////////////////////////////////////////////////////////////////////////					
 					//lcdGotoXY(0, 0);
 					//lcdPuts(">");
 					if (period_var[1] == 0)
@@ -272,8 +273,8 @@ int main (void)
 					}
 					lcdGotoXY(0, 5);
 					lcdPuts("Hello!");
-					lcdGotoXY(1, 15);
-					lcdPuts("*");
+					//lcdGotoXY(1, 15);
+					//lcdPuts("*");
 					//lcdGotoXY(1, 0);
 					//lcdPuts(">");
 					lcdGotoXY(1, 0);
@@ -1042,6 +1043,97 @@ int main (void)
 						lcdClear();
 						_delay_ms(30);
 					}*/
+				}
+////////////////////////////////////////////////////////////////////////////					
+				if (scan_key()==10) 
+				{
+					while(scan_key()==10);						
+					lcdClear();
+					_delay_ms(10);
+					for (anim = 0; anim < 17; anim++)
+					{
+						PORTB |=(1<<5);    //высокий уровень
+						PORTB |=(1<<6);    //высокий уровень
+						
+						lcdGotoXY(0, 0);
+						lcdPuts("Model: ");
+						lcdGotoXY(1, 0);
+						lcdPuts("Version: ");
+						
+						if (anim == 0)
+						{
+							lcdGotoXY(0, 7);
+							lcdPuts("E");
+							//lcdGotoXY(1, 9);
+							//lcdPuts("");
+						}
+						else if (anim == 1)
+						{
+							lcdGotoXY(0, 8);
+							lcdPuts("C");
+							//lcdGotoXY(1, 10);
+							//lcdPuts("");
+						}
+						else if (anim == 2)
+						{
+							lcdGotoXY(0, 9);
+							lcdPuts("L");
+							lcdGotoXY(1, 9);
+							lcdPuts("0");
+						}
+						else if (anim == 3)
+						{
+							lcdGotoXY(0, 10);
+							lcdPuts("-");
+							lcdGotoXY(1, 10);
+							lcdPuts(".");
+						}
+						else if (anim == 4)
+						{
+							lcdGotoXY(0, 11);
+							lcdPuts("1");
+							lcdGotoXY(1, 11);
+							lcdPuts("3");
+						}
+						else if (anim == 5)
+						{
+							lcdGotoXY(0, 12);
+							lcdPuts("1");
+							lcdGotoXY(1, 12);
+							lcdPuts("4");
+						}
+						//else if (anim == 6)
+						//{
+							//lcdGotoXY(0, 0);
+							//lcdPuts("Model: ");
+							//lcdGotoXY(1, 0);
+							//lcdPuts("Version: ");
+						//}	
+						_delay_ms(800);
+					}
+					
+					PORTB &= ~(1<<5);    //низкий уровень
+					PORTB &= ~(1<<6);    //низкий уровень
+					
+					lcdClear();
+					_delay_ms(10);
+					memset(Result, 0, sizeof Result);//------------------
+					f = -1;//------------------
+					r = 0;
+					m = 0;
+////////////////////////////////////////////////////////////////////////////						
+					//if (period_on == 0)
+					//{
+						//period_on = 1;
+					//}
+					//else
+					//{
+						//period_on = 0;
+						//eeprom_busy_wait();
+						//eeprom_write_dword(4, period_on);
+						//lcdClear();
+						//_delay_ms(10);
+					//}
 				}
 ////////////////////////////////////////////////////////////////////////////			
 				if(scan_key()==12)
