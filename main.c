@@ -97,14 +97,14 @@ int main (void)
 	int cycle2 = 0; 
 	char text1[16] = "";
 	char text2[16] = "";
-	//char text3[16] = "";
+	char text3[16] = "";
 	uint8_t ti;
 	//char txt[16] = "";
 	char vcc_var[4] = "";
 	char all_var[4] = "";
 	char period_var[3] = "";
-	unsigned short an; 
-	unsigned short anim;	
+	//unsigned short an; 
+	//unsigned short anim;	
 	unsigned short r = 0;
 	int flag = 0; 
 //--------------------------------------------------------------------------	
@@ -333,7 +333,7 @@ int main (void)
 						strcat(text2, num2);
 						strcat(text2, "'C ");
 					}
-					/*if (ti == 2)
+					if (ti == 2)
 					{
 						if (temperature < 0) 
 						{
@@ -345,7 +345,7 @@ int main (void)
 						itoa(fs[1], num2, 10);
 						strcat(text3, num2);
 						strcat(text3, "'C ");
-					}*/
+					}
 					_delay_ms(20);
 					lcdClear();
 					_delay_ms(10);
@@ -394,9 +394,19 @@ int main (void)
 				lcdPuts(text1);
 				lcdGotoXY(1, 9);
 				lcdPuts(text2);
+				//lcdGotoXY(1, 9);
+				//lcdPuts(text3);
 ////////////////////////////////////////////////////////////////////////////
-				lcdGotoXY(0,0); 
-				lcdPuts("Code:"); 
+				if (text3[0] == 0)
+				{	
+					lcdGotoXY(0,0); 
+					lcdPuts("Code:");
+				}
+				else 
+				{
+					lcdGotoXY(0,0);
+					lcdPuts(text3);
+				}
 				lcdGotoXY(1,0); 
 				lcdPuts(">"); 
 				Result_Copy = atol(Result);
@@ -1045,7 +1055,7 @@ int main (void)
 					}*/
 				}
 ////////////////////////////////////////////////////////////////////////////					
-				if (scan_key()==10) 
+				/*if (scan_key()==10) 
 				{
 					while(scan_key()==10);						
 					lcdClear();
@@ -1134,7 +1144,7 @@ int main (void)
 						//lcdClear();
 						//_delay_ms(10);
 					//}
-				}
+				}*/
 ////////////////////////////////////////////////////////////////////////////			
 				if(scan_key()==12)
 				{
